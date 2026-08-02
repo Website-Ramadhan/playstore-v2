@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Store v2 - Edisi Kemerdekaan</title>
+    <style>
+        body { font-family: Roboto, Arial, sans-serif; background: #1a0505; margin: 0; padding: 10px; color: #ffffff; }
+        
+        /* Header */
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 5px;
+            margin-bottom: 10px;
+        }
+        .logo-title { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: bold; }
+        
+        /* Tombol Poin di Pojok Kanan Atas */
+        .play-points-badge {
+            background: linear-gradient(135deg, #2979ff, #00b0ff);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: none;
+        }
+
+        /* Kotak Pencarian yang Berfungsi */
+        .search-box {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+        }
+        .search-input::placeholder { color: #aaa; }
+
+        /* Menu Tombol (Semua, Game, Aplikasi) */
+        .menu-tags { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; }
+        .tag-btn {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tag-btn.secondary { background: #2d0a0a; border: 1px solid #ff4d4d; }
+
+        /* Banner Event Kemerdekaan */
+        .event-banner {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Card Game/Aplikasi */
+        .app-card {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .app-info { display: flex; gap: 12px; align-items: center; }
+        .app-icon { 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 14px; 
+            object-fit: cover; 
+            border: 1px solid #ff4d4d;
+            background: #331111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .btn-install {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-install:hover { opacity: 0.9; }
+
+        /* Halaman Play Points */
+        #modalPlayPoints {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0505;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .pp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .pp-header h2 { margin: 0; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+        .pp-right-info { display: flex; align-items: center; gap: 15px; }
+        .pp-score { background: #2d0a0a; border: 1px solid #ff4d4d; padding: 5px 12px; border-radius: 15px; font-weight: bold; display: flex; gap: 5px; align-items: center; }
+        .pp-close { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+
+        /* Halaman Sub-Menu Top-Up */
+        #modalTopup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0505;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* Halaman Instruksi Pembayaran */
+        #modalInstruksiBayar {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0505;
+            z-index: 1100;
+            overflow-y: auto;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* Halaman Survei Sulit Berhadiah Bonus Premium */
+        #modalSurvei {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0505;
+            z-index: 1200;
+            overflow-y: auto;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* Kartu Level Member Dinamis (Bronze s/d Sultan) */
+        .bronze-card {
+            background: linear-gradient(135deg, #3d1515, #2d0a0a);
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .bronze-title { font-size: 24px; font-weight: bold; color: #ff8888; margin-bottom: 5px; }
+        .bronze-desc { font-size: 13px; color: #ccc; margin-bottom: 15px; }
+        .progress-bar-bg { background: #441111; height: 6px; border-radius: 3px; width: 100%; margin-bottom: 8px; overflow: hidden; }
+        .progress-bar-fill { background: #ff4d4d; height: 100%; width: 0%; transition: width 0.4s ease; }
+        .badge-icon {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, #cd7f32, #8c531e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border: 2px solid #ffaa55;
+            box-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+            transition: 0.3s;
+        }
+
+        /* Tab Menu di Halaman Play Points */
+        .pp-tabs {
+            display: flex;
+            border-bottom: 1px solid #441111;
+            margin-bottom: 20px;
+        }
+        .pp-tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #aaa;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .pp-tab-btn.active {
+            color: #ff4d4d;
+            border-bottom: 3px solid #ff4d4d;
+        }
+
+        /* Konten Tab */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Kotak Fitur */
+        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #ff8888; }
+        .reward-box {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .btn-klaim {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-klaim:disabled { background: #441111; color: #888; cursor: not-allowed; }
+
+        /* Grid Pilihan Top-Up */
+        .topup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .topup-card {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .topup-card:hover { background: #3d1111; }
+        .topup-points { font-size: 20px; font-weight: bold; color: #ff8888; margin-bottom: 5px; }
+        .topup-price { font-size: 13px; color: #aaa; }
+
+        /* Kotak Instruksi Pembayaran */
+        .payment-box {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .payment-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+            border-bottom: 1px solid #441111;
+            padding-bottom: 8px;
+        }
+        .btn-bayar-sekarang {
+            background: #2979ff;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Kotak Survei Sulit */
+        .survei-box {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .soal-title { font-size: 15px; font-weight: bold; color: #ffaa55; margin-bottom: 10px; }
+        .opsi-label { display: block; background: #1a0505; border: 1px solid #441111; border-radius: 8px; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
+        .opsi-label:hover { border-color: #ff4d4d; }
+        .btn-submit-survei {
+            background: #00b0ff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+
+        /* Bagian Komentar Pengunjung */
+        .comment-section {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .comment-box {
+            background: #1a0505;
+            border: 1px solid #441111;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #ff8888;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .comment-text {
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        /* Form Kirim Komentar Baru */
+        .form-komentar {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .form-komentar input, .form-komentar textarea, .form-komentar select {
+            background: #1a0505;
+            border: 1px solid #ff4d4d;
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+        }
+        .form-komentar textarea { resize: vertical; height: 80px; }
+        .btn-kirim {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-kirim:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-title">
+            <span>🛍️</span> Play Store v2
+        </div>
+        <div>
+            <!-- Tombol Poin di Pojok Kanan Atas -->
+            <button class="play-points-badge" onclick="bukaPlayPoints()">
+                <span>💎</span> <span id="teks-poin">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HALAMAN PLAY POINTS -->
+    <div id="modalPlayPoints">
+        <div class="pp-header">
+            <h2><span>←</span> Play Points</h2>
+            <div class="pp-right-info">
+                <div class="pp-score"><span>💎</span> <span id="poin-modal">0</span></div>
+                <button class="pp-close" onclick="tutupPlayPoints()">✕</button>
+            </div>
+        </div>
+
+        <!-- Kartu Level Member Dinamis (Bronze s/d Sultan) -->
+        <div class="bronze-card">
+            <div>
+                <div class="bronze-title" id="level-title">Bronze</div>
+                <div class="bronze-desc" id="level-desc">Mendapatkan 1 poin per Rp 1.500<br><span id="level-progress-text" style="color:#ff4d4d;">254 poin menuju Silver</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+            </div>
+            <div class="badge-icon" id="badge-icon">🛡️</div>
+        </div>
+
+        <!-- Tab Menu -->
+        <div class="pp-tabs">
+            <button class="pp-tab-btn" onclick="pilihTab(event, 'tabKumpulan')">Kumpulkan</button>
+            <button class="pp-tab-btn active" onclick="pilihTab(event, 'tabTukarkan')">Tukarkan</button>
+            <button class="pp-tab-btn" onclick="pilihTab(event, 'tabKeuntungan')">Keuntungan</button>
+        </div>
+
+        <!-- ISI TAB: KUMPULKAN -->
+        <div id="tabKumpulan" class="tab-content">
+            <div class="section-title">Isi Saldo Poin Kamu</div>
+            
+            <!-- Kotak Event Kemerdekaan -->
+            <div id="kotakEventLama" class="reward-box">
+                <div>
+                    <strong>Paket Poin Event Kemerdekaan</strong><br>
+                    <small style="color: #aaa;">Dapatkan tambahan poin instan</small>
+                </div>
+                <button class="btn-klaim" onclick="ambilDanGantiEvent(100)">Ambil 100 Poin</button>
+            </div>
+
+            <!-- Kotak Event Baru (Misi Main Game Harian) -->
+            <div id="kotakEventBaru" class="reward-box" style="display: none;">
+                <div>
+                    <strong>Misi Main Game Harian 🎮</strong><br>
+                    <small style="color: #aaa;">Mainkan game favoritmu & raih bonus harian</small>
+                </div>
+                <button class="btn-klaim" id="btnEventBaru" onclick="ambilEventBaru(50)">Ambil 50 Poin</button>
+            </div>
+        </div>
+
+        <!-- ISI TAB: TUKARKAN -->
+        <div id="tabTukarkan" class="tab-content active">
+            <div class="section-title">Tukarkan Poin dengan Item</div>
+            
+            <!-- Kotak Skin & Voucher -->
+            <div id="kotakTukarLama" class="reward-box">
+                <div>
+                    <strong>Skin & Diamond Voucher</strong><br>
+                    <small style="color: #aaa;">Tukar 50 Poin untuk hadiah game</small>
+                </div>
+                <button class="btn-klaim" onclick="tukarDanGantiTopup(50)">Tukar</button>
+            </div>
+
+            <!-- Kotak Tempat Top-Up Play Point -->
+            <div id="kotakTopupBaru" class="reward-box" style="display: none;">
+                <div>
+                    <strong>Top-Up Saldo Play Points 💳</strong><br>
+                    <small style="color: #aaa;">Isi ulang poin instan via DANA</small>
+                </div>
+                <button class="btn-klaim" onclick="bukaHalamanTopup()">Top-Up</button>
+            </div>
+        </div>
+
+        <!-- ISI TAB: KEUNTUNGAN -->
+        <div id="tabKeuntungan" class="tab-content">
+            <div class="section-title">Hadiah mingguan</div>
+            <div class="reward-box">
+                <div>
+                    <strong>Hadiah Bronze berikutnya</strong><br>
+                    <small style="color: #aaa;" id="teks-info-hadiah">Tersedia pada 7 Agt</small>
+                </div>
+                <button class="btn-klaim" id="btnHadiah" onclick="klaimHadiahMingguan()">Klaim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN PILIHAN TOP-UP PLAY POINTS -->
+    <div id="modalTopup">
+        <div class="pp-header">
+            <h2><span onclick="tutupHalamanTopup()" style="cursor:pointer;">←</span> Top-Up Play Points</h2>
+            <div class="pp-right-info">
+                <div class="pp-score"><span>💎</span> <span id="poin-topup">0</span></div>
+            </div>
+        </div>
+
+        <div class="section-title">Pilih Paket Play Points</div>
+        <div class="topup-grid">
+            <div class="topup-card" onclick="pilihPaketTopup(100, 15000)">
+                <div class="topup-points">100 Poin 💎</div>
+                <div class="topup-price">Rp 15.000</div>
+            </div>
+            <div class="topup-card" onclick="pilihPaketTopup(250, 35000)">
+                <div class="topup-points">250 Poin 💎</div>
+                <div class="topup-price">Rp 35.000</div>
+            </div>
+            <div class="topup-card" onclick="pilihPaketTopup(500, 70000)">
+                <div class="topup-points">500 Poin 💎</div>
+                <div class="topup-price">Rp 70.000</div>
+            </div>
+            <div class="topup-card" onclick="pilihPaketTopup(1000, 135000)">
+                <div class="topup-points">1.000 Poin 💎</div>
+                <div class="topup-price">Rp 135.000</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN INSTRUKSI PEMBAYARAN DANA -->
+    <div id="modalInstruksiBayar">
+        <div class="pp-header">
+            <h2><span onclick="tutupInstruksiBayar()" style="cursor:pointer;">←</span> Pembayaran DANA</h2>
+        </div>
+
+        <div class="payment-box">
+            <div class="section-title" style="margin-bottom: 15px;">Rincian Pesanan Top-Up</div>
+            
+            <div class="payment-info-row">
+                <span style="color: #aaa;">Total Play Points:</span>
+                <strong id="info-jml-poin" style="color: #ff8888;">0 Poin</strong>
+            </div>
+            <div class="payment-info-row">
+                <span style="color: #aaa;">Metode Pembayaran:</span>
+                <strong style="color: #00b0ff;">DANA E-Wallet</strong>
+            </div>
+            <div class="payment-info-row">
+                <span style="color: #aaa;">Nomor Tujuan DANA:</span>
+                <strong style="color: #00b0ff;">0895403096967</strong>
+            </div>
+            <div class="payment-info-row" style="border-bottom: none;">
+                <span style="color: #aaa;">Total Pembayaran:</span>
+                <strong id="info-harga" style="color: #4cd137; font-size: 18px;">Rp 0</strong>
+            </div>
+
+            <!-- Tombol Memulai Survei Sulit Sebelum Poin Masuk -->
+            <button class="btn-bayar-sekarang" onclick="bukaSurveiSulit()">Bayar Sekarang (Ikuti Survei Bonus)</button>
+        </div>
+
+        <div style="background: #2d0a0a; border: 1px solid #ff4d4d; border-radius: 12px; padding: 15px;">
+            <strong style="color: #ff8888;">Ketentuan Bonus:</strong>
+            <p style="font-size: 13px; color: #ccc; margin: 8px 0 0 0; line-height: 1.5;">
+                Poin tidak akan langsung bertambah setelah transfer. Selesaikan <strong>Survei Logika & Pemrograman Sulit</strong> di halaman berikutnya untuk mengklaim pesananmu + Mendapatkan <strong>Bonus Poin Premium</strong> gratis agar tidak rugi!
+            </p>
+        </div>
+    </div>
+
+    <!-- HALAMAN SURVEI SULIT BERHADIAH BONUS PREMIUM -->
+    <div id="modalSurvei">
+        <div class="pp-header">
+            <h2><span onclick="tutupSurvei()" style="cursor:pointer;">←</span> Survei Verifikasi & Bonus Premium</h2>
+        </div>
+
+        <div class="survei-box">
+            <div style="background: #3d1111; border: 1px solid #ff4d4d; border-radius: 10px; padding: 12px; margin-bottom: 15px;">
+                <strong style="color: #ff8888;">⚠️ Tantangan Uji Kelayakan:</strong>
+                <p style="font-size: 13px; color: #ddd; margin: 5px 0 0 0;">Jawab ketiga soal tingkat lanjut di bawah ini dengan benar untuk membuka pesanan top-up kamu dan mengklaim Bonus Premium!</p>
+            </div>
+
+            <!-- Soal 1 -->
+            <div style="margin-bottom: 20px;">
+                <div class="soal-title">1. Berapakah hasil dari operasi bitwise: `(~15 ^ 0x3F) & 0xFF` dalam pemrograman sistem?</div>
+                <label class="opsi-label"><input type="radio" name="soal1" value="A"> A. 0xC0 (192)</label>
+                <label class="opsi-label"><input type="radio" name="soal1" value="B"> B. 0x30 (48)</label>
+                <label class="opsi-label"><input type="radio" name="soal1" value="C"> C. 0xCF (207)</label>
+                <label class="opsi-label"><input type="radio" name="soal1" value="D"> D. 0x0F (15)</label>
+            </div>
+
+            <!-- Soal 2 -->
+            <div style="margin-bottom: 20px;">
+                <div class="soal-title">2. Kompleksitas waktu terburuk (Worst-case Time Complexity) dari algoritma QuickSort menggunakan pivot acak adalah...</div>
+                <label class="opsi-label"><input type="radio" name="soal2" value="A"> A. O(n log n)</label>
+                <label class="opsi-label"><input type="radio" name="soal2" value="B"> B. O(n²)</label>
+                <label class="opsi-label"><input type="radio" name="soal2" value="C"> C. O(n)</label>
+                <label class="opsi-label"><input type="radio" name="soal2" value="D"> D. O(log n)</label>
+            </div>
+
+            <!-- Soal 3 -->
+            <div style="margin-bottom: 20px;">
+                <div class="soal-title">3. Dalam arsitektur basis data relasional, anomali modifikasi yang terjadi ketika duplikasi data menyebabkan inkonsistensi disebut...</div>
+                <label class="opsi-label"><input type="radio" name="soal3" value="A"> A. Deletion Anomaly</label>
+                <label class="opsi-label"><input type="radio" name="soal3" value="B"> B. Insertion Anomaly</label>
+                <label class="opsi-label"><input type="radio" name="soal3" value="C"> C. Update Anomaly</label>
+                <label class="opsi-label"><input type="radio" name="soal3" value="D"> D. Transaction Isolation Anomaly</label>
+            </div>
+
+            <button class="btn-submit-survei" onclick="cekJawabanSurvei()">Kirim Jawaban & Klaim Bonus Premium</button>
+        </div>
+    </div>
+
+    <!-- Kotak Pencarian yang Berfungsi -->
+    <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari game atau aplikasi..." onkeyup="filterAplikasi()">
+    </div>
+
+    <!-- Menu Kategori -->
+    <div class="menu-tags">
+        <button class="tag-btn" onclick="filterKategori('semua')">Semua</button>
+        <button class="tag-btn secondary" onclick="filterKategori('game')">Game</button>
+        <button class="tag-btn secondary" onclick="filterKategori('app')">Aplikasi</button>
+    </div>
+
+    <!-- Banner Event Kemerdekaan dengan Timer Otomatis -->
+    <div class="event-banner">
+        <span>🇮🇩 Event 17 Agustus:</span>
+        <span id="countdown-timer" style="color: #ff4d4d;">Menghitung...</span>
+    </div>
+
+    <!-- DAFTAR APLIKASI & GAME -->
+    <div id="listAplikasi">
+
+        <!-- GAME -->
+        <div class="app-card" data-name="mobile legends bang bang mlbb moba" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">🎮</div>
+                <div>
+                    <strong style="font-size: 16px;">Mobile Legends: Bang Bang</strong><br>
+                    <small style="color: #aaa;">Moonton • MOBA</small><br>
+                    <span style="color: #f1c40f;">★ 4.5</span> &nbsp; <span style="color: #aaa;">💎 150 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.mobile.legends')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="garena free fire ff battle royale" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">🔥</div>
+                <div>
+                    <strong style="font-size: 16px;">Garena Free Fire</strong><br>
+                    <small style="color: #aaa;">Garena • Battle Royale</small><br>
+                    <span style="color: #f1c40f;">★ 4.3</span> &nbsp; <span style="color: #aaa;">💎 400 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.dts.freefireth')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="roblox petualangan" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">📦</div>
+                <div>
+                    <strong style="font-size: 16px;">Roblox</strong><br>
+                    <small style="color: #aaa;">Roblox Corp • Petualangan</small><br>
+                    <span style="color: #f1c40f;">★ 4.4</span> &nbsp; <span style="color: #aaa;">💎 120 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.roblox.client')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="minecraft mojang simulasi blok" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">👤</div>
+                <div>
+                    <strong style="font-size: 16px;">Minecraft</strong><br>
+                    <small style="color: #aaa;">Mojang • Simulasi Blok</small><br>
+                    <span style="color: #f1c40f;">★ 4.6</span> &nbsp; <span style="color: #aaa;">💎 600 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.mojang.minecraftpe')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="efootball konami sepak bola" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">⚽</div>
+                <div>
+                    <strong style="font-size: 16px;">eFootball 2026</strong><br>
+                    <small style="color: #aaa;">KONAMI • Olahraga</small><br>
+                    <span style="color: #f1c40f;">★ 4.2</span> &nbsp; <span style="color: #aaa;">💎 2 GB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=jp.konami.pesam')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="pubg mobiletencent battle royale" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">🎯</div>
+                <div>
+                    <strong style="font-size: 16px;">PUBG MOBILE</strong><br>
+                    <small style="color: #aaa;">Level Infinite • Action</small><br>
+                    <span style="color: #f1c40f;">★ 4.3</span> &nbsp; <span style="color: #aaa;">💎 800 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.tencent.ig')">Install</button>
+        </div>
+
+        <!-- APLIKASI -->
+        <div class="app-card" data-name="whatsapp meta komunikasi chat" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">💬</div>
+                <div>
+                    <strong style="font-size: 16px;">WhatsApp Messenger</strong><br>
+                    <small style="color: #aaa;">WhatsApp LLC • Komunikasi</small><br>
+                    <span style="color: #f1c40f;">★ 4.3</span> &nbsp; <span style="color: #aaa;">💎 45 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.whatsapp')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="tiktok video hiburan" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">🎵</div>
+                <div>
+                    <strong style="font-size: 16px;">TikTok</strong><br>
+                    <small style="color: #aaa;">TikTok Pte. Ltd. • Hiburan</small><br>
+                    <span style="color: #f1c40f;">★ 4.4</span> &nbsp; <span style="color: #aaa;">💎 95 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="instagram sosmed foto" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">📸</div>
+                <div>
+                    <strong style="font-size: 16px;">Instagram</strong><br>
+                    <small style="color: #aaa;">Instagram • Sosial</small><br>
+                    <span style="color: #f1c40f;">★ 4.0</span> &nbsp; <span style="color: #aaa;">💎 70 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.instagram.android')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="youtube google video" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">▶️</div>
+                <div>
+                    <strong style="font-size: 16px;">YouTube</strong><br>
+                    <small style="color: #aaa;">Google LLC • Pemutar Video</small><br>
+                    <span style="color: #f1c40f;">★ 4.2</span> &nbsp; <span style="color: #aaa;">💎 50 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.google.android.youtube')">Install</button>
+        </div>
+
+    </div>
+
+    <!-- Kolom Komentar Pengunjung -->
+    <div class="comment-section">
+        <h3 style="margin-top: 0; color: #ff4d4d; border-bottom: 1px solid #441111; padding-bottom: 8px;">💬 Ulasan & Komentar Pengunjung</h3>
+        
+        <div id="daftarKomentar">
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Dimas Pratama</span>
+                    <span>⭐ 8 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Websitenya keren banget! Nuansa kemerdekaannya pas, game lengkap, dan pencariannya cepat. Senang banget bisa coba event ini, sukses terus admin!"
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Aurel Maharani</span>
+                    <span>⭐ 8 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Suka banget sama tampilan Play Store edisi khusus ini! Fitur-fiturnya rapi dan gampang dipakai. Bikin betah main game seharian!"
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Budi Santoso</span>
+                    <span>⭐ 2 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Waduh kok poin Play Points saya 0 terus sih? Gak bisa buat beli item game. Tolong admin adain event top-up dong biar bisa isi poin!"
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Rizky Gamer</span>
+                    <span>⭐ 1 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Katanya ada event kemerdekaan tapi tombol belinya belum muncul. Admin kurang teliti nih, tolong cepat dimunculin fiturnya!"
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Tambah Komentar Baru -->
+        <div class="form-komentar">
+            <h4 style="margin: 5px 0; color: #ff8888;">Tulis Komentar Kamu:</h4>
+            <input type="text" id="namaPengunjung" placeholder="Nama kamu...">
+            <select id="ratingPengunjung">
+                <option value="10 / 10">⭐ 10 / 10 - Sempurna!</option>
+                <option value="9 / 10">⭐ 9 / 10 - Sangat Bagus</option>
+                <option value="8 / 10">⭐ 8 / 10 - Keren & Menyenangkan</option>
+                <option value="7 / 10">⭐ 7 / 10 - Bagus</option>
+                <option value="2 / 10">⭐ 2 / 10 - Kurang Puas</option>
+                <option value="1 / 10">⭐ 1 / 10 - Banyak Kekurangan</option>
+            </select>
+            <textarea id="pesanPengunjung" placeholder="Tulis komentar atau ulasanmu di sini..."></textarea>
+            <button class="btn-kirim" onclick="tambahKomentar()">Kirim Komentar</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. PENCARIAN REAL-TIME ---
+        function filterAplikasi() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('app-card');
+
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].getAttribute('data-name');
+                if (name.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // --- 2. FILTER KATEGORI ---
+        function filterKategori(kategori) {
+            let cards = document.getElementsByClassName('app-card');
+            for (let i = 0; i < cards.length; i++) {
+                let cat = cards[i].getAttribute('data-category');
+                if (kategori === 'semua' || cat === kategori) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // --- 3. SISTEM LEVEL DINAMIS & MANAJEMEN KLAIM (PERSISTEN & RESET OTOMATIS TANGGAL 7 AGUSTUS) ---
+        let poinSaya = localStorage.getItem('jumlah_poin') ? parseInt(localStorage.getItem('jumlah_poin')) : 46;
+        let eventSudahDiambil = localStorage.getItem('event_diambil') === 'true';
+        let tukarSudahDiambil = localStorage.getItem('tukar_diambil') === 'true';
+        
+        let selectedPoin = 0;
+        let selectedHarga = 0;
+
+        // Cek Tanggal Hari Ini untuk Reset Hadiah Mingguan & Misi Harian secara Berkala
+        let sekarangObj = new Date();
+        let tanggalHariIni = sekarangObj.getDate();
+        let bulanHariIni = sekarangObj.getMonth(); // 7 berarti Agustus (0-indexed: 0=Jan, 7=Agustus)
+        let tahunHariIni = sekarangObj.getFullYear();
+        let stringHariIni = tahunHariIni + "-" + bulanHariIni + "-" + tanggalHariIni;
+
+        let lastEventDate = localStorage.getItem('last_event_date');
+        let lastHadiahDate = localStorage.getItem('last_hadiah_date');
+
+        // Jika hari sudah berganti, reset status tombol misi harian
+        if (lastEventDate !== stringHariIni) {
+            localStorage.setItem('event_diambil', 'false');
+            eventSudahDiambil = false;
+            localStorage.setItem('last_event_date', stringHariIni);
+        }
+
+        // Jika sudah melewati atau pas tanggal 7 Agustus, cek apakah perlu reset hadiah mingguan
+        // Sesuai permintaan: pas tanggal 7 Agustus langsung muncul klaim lagi dan seterusnya
+        if (bulanHariIni === 7 && tanggalHariIni >= 7) {
+            let periodKey = "hadiah_claimed_" + tahunHariIni + "_aug_" + tanggalHariIni;
+            let sudahKlaimHariIni = localStorage.getItem(periodKey) === 'true';
+            
+            if (!sudahKlaimHariIni) {
+                localStorage.setItem('status_hadiah_mingguan', 'belum');
+            }
+        }
+
+        // Sinkronisasi Tampilan Tombol Misi & Hadiah Berdasarkan Status Tersimpan
+        if (eventSudahDiambil) {
+            document.getElementById('kotakEventLama').style.display = 'none';
+            document.getElementById('kotakEventBaru').style.display = 'flex';
+            let btn = document.getElementById('btnEventBaru');
+            btn.innerHTML = "Selesai ✓";
+            btn.disabled = true;
+        } else {
+            document.getElementById('kotakEventLama').style.display = 'none';
+            document.getElementById('kotakEventBaru').style.display = 'flex';
+            let btn = document.getElementById('btnEventBaru');
+            btn.innerHTML = "Ambil 50 Poin";
+            btn.disabled = false;
+        }
+
+        if (tukarSudahDiambil) {
+            document.getElementById('kotakTukarLama').style.display = 'none';
+            document.getElementById('kotakTopupBaru').style.display = 'flex';
+        }
+
+        let statusHadiah = localStorage.getItem('status_hadiah_mingguan') || 'belum';
+        let btnHadiahEl = document.getElementById('btnHadiah');
+        let teksInfoHadiah = document.getElementById('teks-info-hadiah');
+
+        if (bulanHariIni === 7 && tanggalHariIni >= 7) {
+            teksInfoHadiah.innerHTML = "Tersedia hari ini (Edisi 7 Agt+)";
+        } else {
+            teksInfoHadiah.innerHTML = "Tersedia pada 7 Agt";
+        }
+
+        if (statusHadiah === 'sudah') {
+            btnHadiahEl.innerHTML = "Diklaim ✓";
+            btnHadiahEl.disabled = true;
+        } else {
+            btnHadiahEl.innerHTML = "Klaim";
+            btnHadiahEl.disabled = false;
+        }
+
+        // Fungsi Memperbarui Level Berdasarkan Poin Secara Real-Time
+        function updateLevelMember(poin) {
+            let titleEl = document.getElementById('level-title');
+            let descEl = document.getElementById('level-desc');
+            let progressEl = document.getElementById('progress-fill');
+            let badgeEl = document.getElementById('badge-icon');
+
+            let levelName, badgeIcon, minPoin, maxPoin, nextText, warnaBadge, warnaGradasi;
+
+            if (poin < 300) {
+                levelName = "Bronze";
+                badgeIcon = "🛡️";
+                minPoin = 0; maxPoin = 300;
+                nextText = (300 - poin) + " poin menuju Silver";
+                warnaBadge = "linear-gradient(135deg, #cd7f32, #8c531e)";
+                warnaGradasi = "2px solid #ffaa55";
+            } else if (poin < 1000) {
+                levelName = "Silver";
+                badgeIcon = "🥈";
+                minPoin = 300; maxPoin = 1000;
+                nextText = (1000 - poin) + " poin menuju Gold";
+                warnaBadge = "linear-gradient(135deg, #bdc3c7, #7f8c8d)";
+                warnaGradasi = "2px solid #ecf0f1";
+            } else if (poin < 2500) {
+                levelName = "Gold";
+                badgeIcon = "🥇";
+                minPoin = 1000; maxPoin = 2500;
+                nextText = (2500 - poin) + " poin menuju Platinum";
+                warnaBadge = "linear-gradient(135deg, #f1c40f, #d35400)";
+                warnaGradasi = "2px solid #f39c12";
+            } else if (poin < 5000) {
+                levelName = "Platinum";
+                badgeIcon = "💎";
+                minPoin = 2500; maxPoin = 5000;
+                nextText = (5000 - poin) + " poin menuju Diamond";
+                warnaBadge = "linear-gradient(135deg, #1abc9c, #16a085)";
+                warnaGradasi = "2px solid #1abc9c";
+            } else if (poin < 10000) {
+                levelName = "Diamond";
+                badgeIcon = "✨";
+                minPoin = 5000; maxPoin = 10000;
+                nextText = (10000 - poin) + " poin menuju Sultan";
+                warnaBadge = "linear-gradient(135deg, #3498db, #2980b9)";
+                warnaGradasi = "2px solid #5dade2";
+            } else {
+                levelName = "Sultan 👑";
+                badgeIcon = "👑";
+                minPoin = 10000; maxPoin = 10000;
+                nextText = "Level Maksimal Tercapai! (Sultan)";
+                warnaBadge = "linear-gradient(135deg, #9b59b6, #8e44ad)";
+                warnaGradasi = "2px solid #f1c40f";
+            }
+
+            // Hitung persentase progress bar
+            let persen = 100;
+            if (maxPoin > minPoin) {
+                persen = ((poin - minPoin) / (maxPoin - minPoin)) * 100;
+                if (persen > 100) persen = 100;
+                if (persen < 0) persen = 0;
+            }
+
+            titleEl.innerHTML = levelName;
+            descEl.innerHTML = `Mendapatkan 1 poin per Rp 1.500<br><span style="color:#ff4d4d;">${nextText}</span>`;
+            progressEl.style.width = persen + "%";
+            badgeEl.innerHTML = badgeIcon;
+            badgeEl.style.background = warnaBadge;
+            badgeEl.style.border = warnaGradasi;
+        }
+
+        function updateTampilanPoin() {
+            document.getElementById('teks-poin').innerHTML = poinSaya;
+            document.getElementById('poin-modal').innerHTML = poinSaya;
+            document.getElementById('poin-topup').innerHTML = poinSaya;
+            updateLevelMember(poinSaya);
+        }
+        updateTampilanPoin();
+
+        function bukaPlayPoints() {
+            document.getElementById('modalPlayPoints').style.display = 'block';
+        }
+
+        function tutupPlayPoints() {
+            document.getElementById('modalPlayPoints').style.display = 'none';
+        }
+
+        function bukaHalamanTopup() {
+            document.getElementById('modalTopup').style.display = 'block';
+        }
+
+        function tutupHalamanTopup() {
+            document.getElementById('modalTopup').style.display = 'none';
+        }
+
+        function tutupInstruksiBayar() {
+            document.getElementById('modalInstruksiBayar').style.display = 'none';
+        }
+
+        function tutupSurvei() {
+            document.getElementById('modalSurvei').style.display = 'none';
+        }
+
+        // Fungsi klik event lama: ambil poin, hapus event lama, munculkan event baru
+        function ambilDanGantiEvent(jumlah) {
+            poinSaya += jumlah;
+            localStorage.setItem('jumlah_poin', poinSaya);
+            localStorage.setItem('event_diambil', 'true');
+            updateTampilanPoin();
+
+            document.getElementById('kotakEventLama').style.display = 'none';
+            document.getElementById('kotakEventBaru').style.display = 'flex';
+            let btn = document.getElementById('btnEventBaru');
+            btn.innerHTML = "Ambil 50 Poin";
+            btn.disabled = false;
+
+            alert("Berhasil mengambil " + jumlah + " Play Points! Event misi harian telah terbuka.");
+        }
+
+        // Fungsi ambil poin dari event baru (tetap tersimpan walau keluar website)
+        function ambilEventBaru(jumlah) {
+            poinSaya += jumlah;
+            localStorage.setItem('jumlah_poin', poinSaya);
+            localStorage.setItem('event_diambil', 'true');
+            updateTampilanPoin();
+            
+            let btn = document.getElementById('btnEventBaru');
+            btn.innerHTML = "Selesai ✓";
+            btn.disabled = true;
+            alert("Selamat! Kamu Mendapatkan " + jumlah + " Poin dari Misi Main Game Harian.");
+        }
+
+        // Fungsi tukar item lama: hapus item, munculkan menu top-up
+        function tukarDanGantiTopup(jumlah) {
+            if (poinSaya >= jumlah) {
+                poinSaya -= jumlah;
+                localStorage.setItem('jumlah_poin', poinSaya);
+                localStorage.setItem('tukar_diambil', 'true');
+                updateTampilanPoin();
+
+                document.getElementById('kotakTukarLama').style.display = 'none';
+                document.getElementById('kotakTopupBaru').style.display = 'flex';
+
+                alert("Penukaran berhasil! Menu Top-Up Play Points kini telah terbuka.");
+            } else {
+                alert("Poin kamu tidak cukup untuk menukar item ini!");
+            }
+        }
+
+        // Ketika paket top-up dipilih, buka halaman instruksi bayar DANA
+        function pilihPaketTopup(jmlPoin, hrgRupiah) {
+            selectedPoin = jmlPoin;
+            selectedHarga = hrgRupiah;
+
+            document.getElementById('info-jml-poin').innerHTML = jmlPoin + " Poin";
+            document.getElementById('info-harga').innerHTML = "Rp " + hrgRupiah.toLocaleString();
+
+            document.getElementById('modalTopup').style.display = 'none';
+            document.getElementById('modalInstruksiBayar').style.display = 'block';
+        }
+
+        // Dari tombol Bayar Sekarang, alihkan ke halaman Survei Sulit Berhadiah Bonus Premium
+        function bukaSurveiSulit() {
+            document.getElementById('modalInstruksiBayar').style.display = 'none';
+            document.getElementById('modalSurvei').style.display = 'block';
+        }
+
+        // Cek jawaban survei sulit: jawaban benar = poin asli + bonus premium
+        function cekJawabanSurvei() {
+            let jwb1 = document.querySelector('input[name="soal1"]:checked');
+            let jwb2 = document.querySelector('input[name="soal2"]:checked');
+            let jwb3 = document.querySelector('input[name="soal3"]:checked');
+
+            if (!jwb1 || !jwb2 || !jwb3) {
+                alert("Harap jawab semua soal survei logika terlebih dahulu agar tidak rugi!");
+                return;
+            }
+
+            // Kunci jawaban valid: 1. A (0xC0), 2. B (O(n²)), 3. C (Update Anomaly)
+            if (jwb1.value === 'A' && jwb2.value === 'B' && jwb3.value === 'C') {
+                let bonusPremium = 50; 
+                let totalDiterima = selectedPoin + bonusPremium;
+
+                poinSaya += totalDiterima;
+                localStorage.setItem('jumlah_poin', poinSaya);
+                updateTampilanPoin();
+
+                // Tutup semua modal
+                document.getElementById('modalSurvei').style.display = 'none';
+                document.getElementById('modalPlayPoints').style.display = 'none';
+
+                alert("Luar Biasa! Jawaban kamu benar.\n\nPesanan " + selectedPoin + " Poin berhasil diverifikasi + Bonus Premium " + bonusPremium + " Poin ditambahkan! Total diterima: " + totalDiterima + " Play Points.");
+            } else {
+                alert("Jawaban kamu masih ada yang salah atau kurang tepat! Selesaikan dengan benar agar bonus premium dan pesananmu tidak hangus/rugi.");
+            }
+        }
+
+        // Klaim Hadiah Mingguan (Otomatis aktif kembali tepat mulai 7 Agustus dan seterusnya)
+        function klaimHadiahMingguan() {
+            poinSaya += 25;
+            localStorage.setItem('jumlah_poin', poinSaya);
+            localStorage.setItem('status_hadiah_mingguan', 'sudah');
+            
+            let periodKey = "hadiah_claimed_" + tahunHariIni + "_aug_" + tanggalHariIni;
+            localStorage.setItem(periodKey, 'true');
+
+            updateTampilanPoin();
+            
+            let btn = document.getElementById('btnHadiah');
+            btn.innerHTML = "Diklaim ✓";
+            btn.disabled = true;
+            alert("Selamat! Kamu Mendapatkan 25 Poin dari Hadiah Mingguan.");
+        }
+
+        // Navigasi Tab di Modal Play Points
+        function pilihTab(evt, namaTab) {
+            let contents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            let buttons = document.getElementsByClassName("pp-tab-btn");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            document.getElementById(namaTab).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // --- 4. LINK DOWNLOAD GAME ---
+        function downloadGame(url) {
+            window.open(url, '_blank');
+        }
+
+        // --- 5. FITUR KIRIM KOMENTAR BARU ---
+        function tambahKomentar() {
+            let nama = document.getElementById('namaPengunjung').value.trim();
+            let rating = document.getElementById('ratingPengunjung').value;
+            let pesan = document.getElementById('pesanPengunjung').value.trim();
+
+            if (nama === "" || pesan === "") {
+                alert("Nama dan pesan komentar tidak boleh kosong!");
+                return;
+            }
+
+            let containerKomentar = document.getElementById('daftarKomentar');
+            let kotakBaru = document.createElement('div');
+            kotakBaru.className = 'comment-box';
+            kotakBaru.innerHTML = `
+                <div class="comment-header">
+                    <span>${nama}</span>
+                    <span>⭐ ${rating}</span>
+                </div>
+                <div class="comment-text">
+                    "${pesan}"
+                </div>
+            `;
+
+            containerKomentar.prepend(kotakBaru);
+
+            document.getElementById('namaPengunjung').value = "";
+            document.getElementById('pesanPengunjung').value = "";
+            alert("Komentar berhasil dikirim!");
+        }
+
+        // --- 6. TIMER HITUNG MUNDUR 17 AGUSTUS ---
+        let targetWaktu = new Date("August 17, 2026 00:00:00").getTime();
+
+        let timerInterval = setInterval(function() {
+            let sekarang = new Date().getTime();
+            let selisih = targetWaktu - sekarang;
+
+            if (selisih < 0) {
+                document.getElementById("countdown-timer").innerHTML = "Event Telah Dimulai! 🎉";
+                clearInterval(timerInterval);
+                return;
+            }
+
+            let hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
+            let jam = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let menit = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+            let detik = Math.floor((selisih % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown-timer").innerHTML = hari + "h " + jam + "j " + menit + "m " + detik + "d";
+        }, 1000);
+    </script>
+
+</body>
+</html>
