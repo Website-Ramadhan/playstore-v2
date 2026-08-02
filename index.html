@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Store v2 - Edisi Kemerdekaan</title>
+    <style>
+        body { font-family: Roboto, Arial, sans-serif; background: #1a0505; margin: 0; padding: 10px; color: #ffffff; }
+        
+        /* Header */
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 5px;
+            margin-bottom: 10px;
+        }
+        .logo-title { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: bold; }
+        
+        /* Tombol Poin di Pojok Kanan Atas */
+        .play-points-badge {
+            background: linear-gradient(135deg, #2979ff, #00b0ff);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: none;
+        }
+
+        /* Kotak Pencarian yang Berfungsi */
+        .search-box {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+        }
+        .search-input::placeholder { color: #aaa; }
+
+        /* Menu Tombol (Semua, Game, Aplikasi) */
+        .menu-tags { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; }
+        .tag-btn {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tag-btn.secondary { background: #2d0a0a; border: 1px solid #ff4d4d; }
+
+        /* Banner Event Kemerdekaan */
+        .event-banner {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Card Game/Aplikasi */
+        .app-card {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .app-info { display: flex; gap: 12px; align-items: center; }
+        .app-icon { 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 14px; 
+            object-fit: cover; 
+            border: 1px solid #ff4d4d;
+            background: #331111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .btn-install {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 22px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-install:hover { opacity: 0.9; }
+
+        /* Bagian Komentar Pengunjung */
+        .comment-section {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .comment-box {
+            background: #1a0505;
+            border: 1px solid #441111;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #ff8888;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .comment-text {
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        /* Form Kirim Komentar Baru */
+        .form-komentar {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .form-komentar input, .form-komentar textarea, .form-komentar select {
+            background: #1a0505;
+            border: 1px solid #ff4d4d;
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+        }
+        .form-komentar textarea { resize: vertical; height: 80px; }
+        .btn-kirim {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-kirim:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-title">
+            <span>🛍️</span> Play Store v2
+        </div>
+        <div>
+            <!-- Tombol Play Points (Sandi owner: 000000) -->
+            <button class="play-points-badge" onclick="cekOwner()">
+                <span>💎</span> <span id="teks-poin">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Kotak Pencarian yang Berfungsi -->
+    <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari game atau aplikasi..." onkeyup="filterAplikasi()">
+    </div>
+
+    <!-- Menu Kategori -->
+    <div class="menu-tags">
+        <button class="tag-btn" onclick="filterKategori('semua')">Semua</button>
+        <button class="tag-btn secondary" onclick="filterKategori('game')">Game</button>
+        <button class="tag-btn secondary" onclick="filterKategori('app')">Aplikasi</button>
+    </div>
+
+    <!-- Banner Event Kemerdekaan dengan Timer Otomatis -->
+    <div class="event-banner">
+        <span>🇮🇩 Event 17 Agustus:</span>
+        <span id="countdown-timer" style="color: #ff4d4d;">Menghitung...</span>
+    </div>
+
+    <!-- DAFTAR APLIKASI & GAME -->
+    <div id="listAplikasi">
+
+        <!-- GAME -->
+        <div class="app-card" data-name="mobile legends bang bang mlbb moba" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">🎮</div>
+                <div>
+                    <strong style="font-size: 16px;">Mobile Legends: Bang Bang</strong><br>
+                    <small style="color: #aaa;">Moonton • MOBA</small><br>
+                    <span style="color: #f1c40f;">★ 4.5</span> &nbsp; <span style="color: #aaa;">💎 150 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.mobile.legends')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="garena free fire ff battle royale" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">🔥</div>
+                <div>
+                    <strong style="font-size: 16px;">Garena Free Fire</strong><br>
+                    <small style="color: #aaa;">Garena • Battle Royale</small><br>
+                    <span style="color: #f1c40f;">★ 4.3</span> &nbsp; <span style="color: #aaa;">💎 400 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.dts.freefireth')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="roblox petualangan" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">📦</div>
+                <div>
+                    <strong style="font-size: 16px;">Roblox</strong><br>
+                    <small style="color: #aaa;">Roblox Corp • Petualangan</small><br>
+                    <span style="color: #f1c40f;">★ 4.4</span> &nbsp; <span style="color: #aaa;">💎 120 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.roblox.client')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="minecraft mojang simulasi blok" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">👤</div>
+                <div>
+                    <strong style="font-size: 16px;">Minecraft</strong><br>
+                    <small style="color: #aaa;">Mojang • Simulasi Blok</small><br>
+                    <span style="color: #f1c40f;">★ 4.6</span> &nbsp; <span style="color: #aaa;">💎 600 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.mojang.minecraftpe')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="efootball konami sepak bola" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">⚽</div>
+                <div>
+                    <strong style="font-size: 16px;">eFootball 2026</strong><br>
+                    <small style="color: #aaa;">KONAMI • Olahraga</small><br>
+                    <span style="color: #f1c40f;">★ 4.2</span> &nbsp; <span style="color: #aaa;">💎 2 GB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=jp.konami.pesam')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="pubg mobiletencent battle royale" data-category="game">
+            <div class="app-info">
+                <div class="app-icon">🎯</div>
+                <div>
+                    <strong style="font-size: 16px;">PUBG MOBILE</strong><br>
+                    <small style="color: #aaa;">Level Infinite • Action</small><br>
+                    <span style="color: #f1c40f;">★ 4.3</span> &nbsp; <span style="color: #aaa;">💎 800 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.tencent.ig')">Install</button>
+        </div>
+
+        <!-- APLIKASI -->
+        <div class="app-card" data-name="whatsapp meta komunikasi chat" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">💬</div>
+                <div>
+                    <strong style="font-size: 16px;">WhatsApp Messenger</strong><br>
+                    <small style="color: #aaa;">WhatsApp LLC • Komunikasi</small><br>
+                    <span style="color: #f1c40f;">★ 4.3</span> &nbsp; <span style="color: #aaa;">💎 45 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.whatsapp')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="tiktok video hiburan" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">🎵</div>
+                <div>
+                    <strong style="font-size: 16px;">TikTok</strong><br>
+                    <small style="color: #aaa;">TikTok Pte. Ltd. • Hiburan</small><br>
+                    <span style="color: #f1c40f;">★ 4.4</span> &nbsp; <span style="color: #aaa;">💎 95 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="instagram sosmed foto" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">📸</div>
+                <div>
+                    <strong style="font-size: 16px;">Instagram</strong><br>
+                    <small style="color: #aaa;">Instagram • Sosial</small><br>
+                    <span style="color: #f1c40f;">★ 4.0</span> &nbsp; <span style="color: #aaa;">💎 70 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.instagram.android')">Install</button>
+        </div>
+
+        <div class="app-card" data-name="youtube google video" data-category="app">
+            <div class="app-info">
+                <div class="app-icon">▶️</div>
+                <div>
+                    <strong style="font-size: 16px;">YouTube</strong><br>
+                    <small style="color: #aaa;">Google LLC • Pemutar Video</small><br>
+                    <span style="color: #f1c40f;">★ 4.2</span> &nbsp; <span style="color: #aaa;">💎 50 MB</span>
+                </div>
+            </div>
+            <button class="btn-install" onclick="downloadGame('https://play.google.com/store/apps/details?id=com.google.android.youtube')">Install</button>
+        </div>
+
+    </div>
+
+    <!-- Kolom Komentar Pengunjung (Kombinasi Rating 8 & Rating Sedikit + Fitur Komentar) -->
+    <div class="comment-section">
+        <h3 style="margin-top: 0; color: #ff4d4d; border-bottom: 1px solid #441111; padding-bottom: 8px;">💬 Ulasan & Komentar Pengunjung</h3>
+        
+        <div id="daftarKomentar">
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Dimas Pratama</span>
+                    <span>⭐ 8 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Websitenya keren banget! Nuansa kemerdekaannya pas, game lengkap, dan pencariannya cepat. Senang banget bisa coba event ini, sukses terus admin!"
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Aurel Maharani</span>
+                    <span>⭐ 8 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Suka banget sama tampilan Play Store edisi khusus ini! Fitur-fiturnya rapi dan gampang dipakai. Bikin betah main game seharian!"
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Budi Santoso</span>
+                    <span>⭐ 2 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Waduh kok poin Play Points saya 0 terus sih? Gak bisa buat beli item game. Tolong admin adain event top-up dong biar bisa isi poin!"
+                </div>
+            </div>
+
+            <div class="comment-box">
+                <div class="comment-header">
+                    <span>Rizky Gamer</span>
+                    <span>⭐ 1 / 10</span>
+                </div>
+                <div class="comment-text">
+                    "Katanya ada event kemerdekaan tapi tombol belinya belum muncul. Admin kurang teliti nih, tolong cepat dimunculin fiturnya!"
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Tambah Komentar Baru -->
+        <div class="form-komentar">
+            <h4 style="margin: 5px 0; color: #ff8888;">Tulis Komentar Kamu:</h4>
+            <input type="text" id="namaPengunjung" placeholder="Nama kamu...">
+            <select id="ratingPengunjung">
+                <option value="10 / 10">⭐ 10 / 10 - Sempurna!</option>
+                <option value="9 / 10">⭐ 9 / 10 - Sangat Bagus</option>
+                <option value="8 / 10">⭐ 8 / 10 - Keren & Menyenangkan</option>
+                <option value="7 / 10">⭐ 7 / 10 - Bagus</option>
+                <option value="2 / 10">⭐ 2 / 10 - Kurang Puas</option>
+                <option value="1 / 10">⭐ 1 / 10 - Banyak Kekurangan</option>
+            </select>
+            <textarea id="pesanPengunjung" placeholder="Tulis komentar atau ulasanmu di sini..."></textarea>
+            <button class="btn-kirim" onclick="tambahKomentar()">Kirim Komentar</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. PENCARIAN REAL-TIME ---
+        function filterAplikasi() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('app-card');
+
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].getAttribute('data-name');
+                if (name.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // --- 2. FILTER KATEGORI ---
+        function filterKategori(kategori) {
+            let cards = document.getElementsByClassName('app-card');
+            for (let i = 0; i < cards.length; i++) {
+                let cat = cards[i].getAttribute('data-category');
+                if (kategori === 'semua' || cat === kategori) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // --- 3. SISTEM POIN OWNER ---
+        let statusOwner = localStorage.getItem('is_owner');
+
+        function updateTampilanPoin() {
+            const teksPoin = document.getElementById('teks-poin');
+            if (statusOwner === 'true') {
+                teksPoin.innerHTML = "∞";
+            } else {
+                teksPoin.innerHTML = "0";
+            }
+        }
+        updateTampilanPoin();
+
+        function cekOwner() {
+            if (statusOwner !== 'true') {
+                let sandi = prompt("Masukkan sandi owner:");
+                if (sandi === "000000") {
+                    localStorage.setItem('is_owner', 'true');
+                    statusOwner = 'true';
+                    updateTampilanPoin();
+                    alert("Berhasil! Poin kamu sekarang Unlimited (Owner Mode).");
+                } else if (sandi !== null) {
+                    alert("Sandi salah!");
+                }
+            } else {
+                alert("Kamu sudah login sebagai Owner (Unlimited Points).");
+            }
+        }
+
+        // --- 4. LINK DOWNLOAD GAME ---
+        function downloadGame(url) {
+            window.open(url, '_blank');
+        }
+
+        // --- 5. FITUR KIRIM KOMENTAR BARU ---
+        function tambahKomentar() {
+            let nama = document.getElementById('namaPengunjung').value.trim();
+            let rating = document.getElementById('ratingPengunjung').value;
+            let pesan = document.getElementById('pesanPengunjung').value.trim();
+
+            if (nama === "" || pesan === "") {
+                alert("Nama dan pesan komentar tidak boleh kosong!");
+                return;
+            }
+
+            let containerKomentar = document.getElementById('daftarKomentar');
+            let kotakBaru = document.createElement('div');
+            kotakBaru.className = 'comment-box';
+            kotakBaru.innerHTML = `
+                <div class="comment-header">
+                    <span>${nama}</span>
+                    <span>⭐ ${rating}</span>
+                </div>
+                <div class="comment-text">
+                    "${pesan}"
+                </div>
+            `;
+
+            containerKomentar.prepend(kotakBaru);
+
+            // Reset form
+            document.getElementById('namaPengunjung').value = "";
+            document.getElementById('pesanPengunjung').value = "";
+            alert("Komentar berhasil dikirim!");
+        }
+
+        // --- 6. TIMER HITUNG MUNDUR 17 AGUSTUS ---
+        let targetWaktu = new Date("August 17, 2026 09:34:00").getTime();
+
+        let timerInterval = setInterval(function() {
+            let sekarang = new Date().getTime();
+            let selisih = targetWaktu - sekarang;
+
+            if (selisih < 0) {
+                document.getElementById("countdown-timer").innerHTML = "Event Telah Dimulai! 🎉";
+                clearInterval(timerInterval);
+                return;
+            }
+
+            let hari = Math.floor(selisih / (1000 * 60 * 60 * 24));
+            let jam = Math.floor((selisih % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let menit = Math.floor((selisih % (1000 * 60 * 60)) / (1000 * 60));
+            let detik = Math.floor((selisih % (1000 * 60)) / 1000);
+
+            document.getElementById("countdown-timer").innerHTML = hari + "h " + jam + "j " + menit + "m " + detik + "d";
+        }, 1000);
+    </script>
+
+</body>
+</html>
