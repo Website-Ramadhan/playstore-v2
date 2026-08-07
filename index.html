@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Play Store v2 - Official Store</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: Roboto, Arial, sans-serif; 
+            background: #1a0505; 
+            margin: 0; 
+            padding: 16px; 
+            color: #ffffff; 
+            width: 100%;
+            overflow-x: hidden;
+        }
+                                                
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px 0;
+            margin-bottom: 15px;
+        }
+        .logo-title { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: bold; }
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .play-points-badge {
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: none;
+            background: linear-gradient(135deg, #2979ff, #00b0ff);
+        }
+        .admin-badge {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: none;
+            display: none; 
+        }
+        .search-box {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 30px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+        }
+        .search-input::placeholder { color: #aaa; }
+        .menu-tags { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .tag-btn {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+        .tag-btn.secondary { background: #2d0a0a; border: 1px solid #ff4d4d; }
+        .event-banner {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 14px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .app-card {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .app-info { display: flex; gap: 14px; align-items: center; }
+        .app-icon { 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 14px; 
+            object-fit: cover; 
+            border: 1px solid #ff4d4d;
+            background: #331111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        .btn-install {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-beli {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        #modalPlayPoints, #modalTopup, #modalAdmin, #modalPinAdmin, #modalSurvei, #modalSurveiPoints, #modalDetailLevel, #modalHistori {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0505;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #modalTopup { z-index: 1000; }
+        #modalDetailLevel, #modalHistori { z-index: 1100; }
+        #modalSurvei, #modalSurveiPoints { z-index: 1200; }
+        #modalAdmin { z-index: 1300; }
+        #modalPinAdmin { z-index: 1400; }
+        .pp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .pp-header h2 { margin: 0; font-size: 22px; display: flex; align-items: center; gap: 8px; }
+        .pp-right-info { display: flex; align-items: center; gap: 15px; }
+        .pp-score { background: #2d0a0a; border: 1px solid #ff4d4d; padding: 6px 14px; border-radius: 15px; font-weight: bold; display: flex; gap: 6px; align-items: center; font-size: 15px; }
+        .pp-close { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+        .bronze-card {
+            background: linear-gradient(135deg, #3d1515, #2d0a0a);
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .bronze-card:hover { border-color: #ff8888; background: linear-gradient(135deg, #4d1d1d, #3d1111); }
+        .bronze-title { font-size: 26px; font-weight: bold; color: #ff8888; margin-bottom: 5px; }
+        .bronze-desc { font-size: 14px; color: #ccc; margin-bottom: 15px; }
+        .progress-bar-bg { background: #441111; height: 8px; border-radius: 4px; width: 100%; margin-bottom: 8px; overflow: hidden; }
+        .progress-bar-fill { background: #ff4d4d; height: 100%; width: 0%; transition: width 0.4s ease; }
+        .badge-icon {
+            width: 75px; height: 75px;
+            background: linear-gradient(135deg, #cd7f32, #8c531e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            border: 2px solid #ffaa55;
+            box-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+        }
+        .pp-tabs {
+            display: flex;
+            border-bottom: 1px solid #441111;
+            margin-bottom: 20px;
+        }
+        .pp-tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #aaa;
+            padding: 14px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .pp-tab-btn.active {
+            color: #ff4d4d;
+            border-bottom: 3px solid #ff4d4d;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .section-title { font-size: 17px; font-weight: bold; margin-bottom: 12px; color: #ff8888; }
+        .reward-box {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 14px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+        .btn-klaim {
+            background: #ff3333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+        .btn-klaim:disabled {
+            background: #441111;
+            color: #888;
+            cursor: not-allowed;
+        }
+        .topup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .topup-card {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .topup-card:hover { background: #3d1111; }
+        .topup-points { font-size: 20px; font-weight: bold; color: #ff8888; margin-bottom: 8px; }
+        .topup-price { font-size: 13px; color: #00b0ff; font-weight: bold; }
+        .survey-option {
+            background: #1a0505;
+            border: 1px solid #441111;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            text-align: left;
+            color: white;
+            width: 100%;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+        .survey-option:hover { border-color: #ff4d4d; background: #2d0a0a; }
+        .admin-form-group {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+        .admin-form-group label {
+            display: block;
+            font-size: 14px;
+            color: #ff8888;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .admin-form-group input, .admin-form-group select, .admin-form-group textarea {
+            width: 100%;
+            background: #1a0505;
+            border: 1px solid #441111;
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+            margin-bottom: 12px;
+            font-family: inherit;
+            font-size: 15px;
+        }
+        .btn-admin-action {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .comment-section {
+            background: #2d0a0a;
+            border: 1px solid #ff4d4d;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .comment-box {
+            background: #1a0505;
+            border: 1px solid #441111;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #ff8888;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .comment-text { font-size: 15px; color: #ddd; }
+        .level-tier-box {
+            background: #2d0a0a;
+            border: 1px solid #441111;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .level-tier-icon { font-size: 32px; width: 50px; text-align: center; }
+        .history-item {
+            background: #2d0a0a;
+            border: 1px solid #441111;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-title" id="secretLogoTrigger" onclick="triggerSecretAdmin()" style="cursor: pointer;" title="Klik 5x untuk buka Admin">
+            <span>🛍️</span> Play Store v2
+        </div>
+        <div class="header-actions">
+            <button class="play-points-badge" onclick="bukaHistoriModal()" style="background: linear-gradient(135deg, #8e44ad, #9b59b6);">
+                <span>📜</span> Histori
+            </button>
+            <button id="btnAdminPanel" class="admin-badge" onclick="bukaAdminPanel()">
+                <span>⚙️</span> Admin
+            </button>
+            <button class="play-points-badge" onclick="bukaPlayPoints()">
+                <span>🏆</span> <span id="teks-poin">300</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MODAL INPUT PIN ADMIN -->
+    <div id="modalPinAdmin">
+        <div class="pp-header">
+            <h2><span>🔒</span> Verifikasi Pemilik Admin</h2>
+            <button class="pp-close" onclick="tutupPinAdmin()">✕</button>
+        </div>
+        <div class="admin-form-group" style="text-align: center;">
+            <p style="font-size: 14px; color: #aaa;">Masukkan PIN Akses:</p>
+            <input type="password" id="inputPinAdminRahasia" placeholder="Masukkan PIN" style="text-align: center; font-size: 20px; letter-spacing: 5px;">
+            <button class="btn-admin-action" style="background: #27ae60;" onclick="cekPinAdmin()">Buka Admin Panel</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL -->
+    <div id="modalAdmin">
+        <div class="pp-header">
+            <h2><span onclick="tutupAdminPanel()" style="cursor:pointer;">←</span> Admin Panel Eksklusif</h2>
+            <button class="pp-close" onclick="tutupAdminPanel()">✕</button>
+        </div>
+        <div class="admin-form-group" style="border-color: #00b0ff; background: linear-gradient(135deg, #0d1b2a, #2d0a0a);">
+            <div class="section-title" style="margin-top:0; color: #00b0ff;">📢 Fitur Broadcast & Hadiah Instan</div>
+            <label>Pesan Pengumuman</label>
+            <textarea id="adminBroadcastPesan" placeholder="Contoh: Target timer 17 Agustus aktif!"></textarea>
+            <label>Kirim Bonus Play Coins Instan</label>
+            <input type="number" id="adminBonusCoins" value="50">
+            <button class="btn-admin-action" style="background: #00b0ff;" onclick="kirimBroadcastDanHadiah()">🚀 Kirim Broadcast & Coins</button>
+        </div>
+        <div class="admin-form-group">
+            <div class="section-title" style="margin-top:0;">Kontrol Saldo Akun</div>
+            <label>Atur Play Points (Level)</label>
+            <input type="number" id="adminSetPoin" value="300">
+            <label>Atur Play Coins (Beli Game/App)</label>
+            <input type="number" id="adminSetCoins" value="150">
+            <button class="btn-admin-action" style="background:#2979ff;" onclick="updateSaldoAdmin()">💾 Perbarui Saldo</button>
+        </div>
+        <div class="admin-form-group" style="border-color: #f39c12;">
+            <div class="section-title" style="margin-top:0; color: #f39c12;">🛠️ Kontrol Hadiah Mingguan & 5 Hari Expired</div>
+            <p style="font-size: 13px; color: #aaa;">Uji coba simulasi reset atau masa kedaluwarsa hadiah mingguan.</p>
+            <button class="btn-admin-action" style="background: #f39c12; margin-bottom: 10px;" onclick="resetHadiahMingguanAdmin()">🔄 Reset Status Hadiah Mingguan</button>
+            <button class="btn-admin-action" style="background: #c0392b;" onclick="simulasiLewat5HariAdmin()">⏰ Simulasi Lewat 5 Hari (Hadiah Hangus & Diganti)</button>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL LEVEL & TIER -->
+    <div id="modalDetailLevel">
+        <div class="pp-header">
+            <h2><span onclick="tutupDetailLevel()" style="cursor:pointer;">←</span> Daftar Level & Tier</h2>
+            <button class="pp-close" onclick="tutupDetailLevel()">✕</button>
+        </div>
+        <div style="margin-bottom: 15px; color: #aaa; font-size: 14px;">Pelajari persyaratan poin untuk setiap kenaikan level akun Google Play Anda:</div>
+        
+        <div class="level-tier-box" style="border-color: #cd7f32;">
+            <div class="level-tier-icon">🛡️</div>
+            <div>
+                <div style="font-size: 18px; font-weight: bold; color: #cd7f32;">Bronze</div>
+                <div style="font-size: 13px; color: #ccc;">0 - 299 Play Points</div>
+                <div style="font-size: 12px; color: #ff8888; margin-top: 4px;">Status akun dasar penjelajah aplikasi.</div>
+            </div>
+        </div>
+
+        <div class="level-tier-box" style="border-color: #bdc3c7;">
+            <div class="level-tier-icon">🥈</div>
+            <div>
+                <div style="font-size: 18px; font-weight: bold; color: #ecf0f1;">Silver</div>
+                <div style="font-size: 13px; color: #ccc;">300 - 999 Play Points</div>
+                <div style="font-size: 12px; color: #4cd137; margin-top: 4px;">Akses hadiah mingguan standar & misi eksklusif menengah.</div>
+            </div>
+        </div>
+
+        <div class="level-tier-box" style="border-color: #f1c40f;">
+            <div class="level-tier-icon">🥇</div>
+            <div>
+                <div style="font-size: 18px; font-weight: bold; color: #f1c40f;">Gold</div>
+                <div style="font-size: 13px; color: #ccc;">1.000 - 4.999 Play Points</div>
+                <div style="font-size: 12px; color: #f39c12; margin-top: 4px;">Bonus poin lebih tinggi per survei dan event khusus.</div>
+            </div>
+        </div>
+
+        <div class="level-tier-box" style="border-color: #00b0ff; background: linear-gradient(135deg, #0d1b2a, #2d0a0a);">
+            <div class="level-tier-icon">💎</div>
+            <div>
+                <div style="font-size: 18px; font-weight: bold; color: #00b0ff;">Platinum / VIP Sultan</div>
+                <div style="font-size: 13px; color: #ccc;">5.000+ Play Points</div>
+                <div style="font-size: 12px; color: #00b0ff; margin-top: 4px;">Level maksimal tertinggi! Keuntungan VIP & diskon koin penuh.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HISTORI PENGAMBILAN & HADIAH -->
+    <div id="modalHistori">
+        <div class="pp-header">
+            <h2><span onclick="tutupHistoriModal()" style="cursor:pointer;">←</span> Histori Aktivitas & Hadiah</h2>
+            <button class="pp-close" onclick="tutupHistoriModal()">✕</button>
+        </div>
+        <div style="margin-bottom: 15px; color: #aaa; font-size: 14px;">Catatan aktivitas klaim poin, hadiah mingguan, dan kedaluwarsa:</div>
+        <div id="containerListHistori">
+            <div class="history-item">
+                <div>
+                    <div style="font-weight: bold; font-size: 15px; color: #ff8888;">Belum ada histori</div>
+                    <div style="font-size: 12px; color: #888;">Lakukan klaim hadiah atau survei untuk mencatat histori di sini.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN PLAY POINTS & LEVEL -->
+    <div id="modalPlayPoints">
+        <div class="pp-header">
+            <h2 style="cursor:pointer;" onclick="tutupPlayPoints()"><span>←</span> Play Points & Level</h2>
+            <div class="pp-right-info">
+                <div class="pp-score"><span>🏆</span> <span id="poin-modal">300</span></div>
+                <button class="pp-close" onclick="tutupPlayPoints()">✕</button>
+            </div>
+        </div>
+        
+        <div class="bronze-card" onclick="bukaDetailLevel()" title="Klik untuk lihat detail level & tier">
+            <div>
+                <div class="bronze-title" id="level-title">Silver</div>
+                <div class="bronze-desc" id="level-desc">Status Akun Menengah<br><span style="color:#4cd137;">700 poin menuju Gold</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+                <div style="font-size: 11px; color: #aaa; margin-top: 4px;">👆 Ketuk kartu ini untuk melihat detail semua level & tier</div>
+            </div>
+            <div class="badge-icon" id="badge-icon">🥈</div>
+        </div>
+
+        <!-- PLAY COINS DI TENGAH -->
+        <div style="background: linear-gradient(135deg, #3d2200, #2d0a0a); border: 1px solid #f39c12; border-radius: 16px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; cursor: pointer;" onclick="bukaHalamanTopup()">
+            <div>
+                <div style="font-size: 22px; font-weight: bold; color: #f39c12; margin-bottom: 4px;">Play Coins</div>
+                <div style="font-size: 13px; color: #ddd;">Saldo Koin untuk Beli Game & App Berbayar</div>
+            </div>
+            <div style="background: #2d0a0a; border: 1px solid #f39c12; padding: 10px 18px; border-radius: 20px; font-weight: bold; font-size: 18px; display: flex; align-items: center; gap: 8px; color: #f39c12;">
+                <span>🪙</span> <span id="coins-dalam-poin">150</span>
+            </div>
+        </div>
+
+        <div class="pp-tabs">
+            <button class="pp-tab-btn active" onclick="pilihTab(event, 'tabKumpulan')">Kumpulkan Poin</button>
+            <button class="pp-tab-btn" onclick="pilihTab(event, 'tabKeuntungan')">Keuntungan</button>
+        </div>
+
+        <div id="tabKumpulan" class="tab-content active">
+            <div class="section-title">Misi Survei Play Points 🧠</div>
+            <div class="reward-box">
+                <div>
+                    <strong>Survei Pengetahuan Aplikasi & Sistem</strong><br>
+                    <small style="color: #ff8888;">Hadiah: +50 Play Points 🏆</small>
+                </div>
+                <button class="btn-klaim" onclick="mulaiSurveiPoints(50)">Mulai Survei</button>
+            </div>
+            <div class="reward-box">
+                <div>
+                    <strong>Survei Optimalisasi Performa Android</strong><br>
+                    <small style="color: #ff8888;">Hadiah: +150 Play Points 🏆</small>
+                </div>
+                <button class="btn-klaim" onclick="mulaiSurveiPoints(150)">Mulai Survei</button>
+            </div>
+            <div class="reward-box">
+                <div>
+                    <strong>Survei Keamanan & Ekosistem Lanjutan</strong><br>
+                    <small style="color: #ff8888;">Hadiah: +500 Play Points 🏆</small>
+                </div>
+                <button class="btn-klaim" onclick="mulaiSurveiPoints(500)">Mulai Survei</button>
+            </div>
+            <div class="reward-box">
+                <div>
+                    <strong>Survei Eksklusif Developer Pro</strong><br>
+                    <small style="color: #ff8888;">Hadiah: +1500 Play Points 🏆</small>
+                </div>
+                <button class="btn-klaim" onclick="mulaiSurveiPoints(1500)">Mulai Survei</button>
+            </div>
+
+            <div class="section-title" style="margin-top: 20px;">Klaim Play Points Harian / Event</div>
+            <div class="reward-box">
+                <div>
+                    <strong>Paket Play Points Menuju 17 Agustus</strong><br>
+                    <small style="color: #aaa;" id="statusSisaKlaim">Sisa kuota klaim: memuat...</small>
+                </div>
+                <button class="btn-klaim" id="btnEventKumpul" onclick="ambilEventUtama(100)">Ambil 100 Poin</button>
+            </div>
+        </div>
+
+        <div id="tabKeuntungan" class="tab-content">
+            <div class="section-title">Hadiah mingguan</div>
+            <div class="reward-box">
+                <div>
+                    <strong id="judulHadiahMingguanTeks">Hadiah Level berikutnya</strong><br>
+                    <small style="color: #aaa;" id="infoStatusMingguan">Tersedia untuk diklaim</small>
+                </div>
+                <button class="btn-klaim" id="btnKlaimMingguan" onclick="klaimHadiahMingguan()">Klaim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HALAMAN DAPATKAN PLAY COINS (SURVEI) -->
+    <div id="modalTopup">
+        <div class="pp-header">
+            <h2><span onclick="tutupHalamanTopup()" style="cursor:pointer;">←</span> Dapatkan Play Coins<br>(Misi Survei)</h2>
+            <div class="pp-right-info">
+                <div class="pp-score"><span>🪙</span> <span id="coins-topup">150</span></div>
+            </div>
+        </div>
+        <div class="section-title" style="margin-bottom: 20px;">Pilih Misi Survei Tersulit & Raih Bonus<br>+20% Play Coins 🗿</div>
+        <div class="topup-grid">
+            <div class="topup-card" onclick="mulaiSurveiTersulit(50)">
+                <div class="topup-points">50 Koin 🪙</div>
+                <div class="topup-price">Bonus Jadi 60 Koin</div>
+            </div>
+            <div class="topup-card" onclick="mulaiSurveiTersulit(150)">
+                <div class="topup-points">150 Koin 🪙</div>
+                <div class="topup-price">Bonus Jadi 180 Koin</div>
+            </div>
+            <div class="topup-card" onclick="mulaiSurveiTersulit(400)">
+                <div class="topup-points">400 Koin 🪙</div>
+                <div class="topup-price">Bonus Jadi 480 Koin</div>
+            </div>
+            <div class="topup-card" onclick="mulaiSurveiTersulit(1000)">
+                <div class="topup-points">1.000 Koin 🪙</div>
+                <div class="topup-price">Bonus Jadi 1.200 Koin</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KUIS SURVEI PLAY POINTS -->
+    <div id="modalSurveiPoints">
+        <div class="pp-header">
+            <h2><span>🧠</span> Survei Play Points</h2>
+            <button class="pp-close" onclick="tutupSurveiPoints()">✕</button>
+        </div>
+        <div class="admin-form-group">
+            <p style="font-size: 13px; color: #ff8888; margin-bottom: 8px;" id="infoTargetSurveiPoints">Target Hadiah: 50 Play Points</p>
+            <p style="font-size: 16px; font-weight: bold; color: #ff8888; margin-bottom: 18px;" id="soalSurveiPointsTeks">Pertanyaan sedang dimuat...</p>
+            <div id="pilihanJawabanPointsContainer"></div>
+        </div>
+    </div>
+
+    <!-- MODAL KUIS SURVEI TERSULIT (COINS) -->
+    <div id="modalSurvei">
+        <div class="pp-header">
+            <h2><span>🧠</span> Survei Tersulit Google Play</h2>
+            <button class="pp-close" onclick="tutupSurvei()">✕</button>
+        </div>
+        <div class="admin-form-group">
+            <p style="font-size: 13px; color: #f39c12; margin-bottom: 8px;" id="infoTargetSurvei">Target Hadiah: 60 Play Coins</p>
+            <p style="font-size: 16px; font-weight: bold; color: #ff8888; margin-bottom: 18px;" id="soalSurveiTeks">Pertanyaan sedang dimuat...</p>
+            <div id="pilihanJawabanContainer"></div>
+        </div>
+    </div>
+
+    <!-- Pencarian -->
+    <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari dari 1000+ aplikasi & game Google Play..." onkeyup="filterAplikasi()" oninput="filterAplikasi()">
+    </div>
+
+    <div class="menu-tags">
+        <button class="tag-btn" onclick="filterKategori('semua')">Semua (1000)</button>
+        <button class="tag-btn secondary" onclick="filterKategori('app')">📱 Aplikasi Resmi (500)</button>
+        <button class="tag-btn secondary" onclick="filterKategori('game')">🎮 Game Play Store (500)</button>
+        <button class="tag-btn secondary" onclick="filterKategori('premium')">👑 Aplikasi/Game Pro</button>
+    </div>
+
+    <div class="event-banner">
+        <span>⏳ Target 17 Agustus (15.36.40):</span>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <span id="countdown-timer" style="color: #ff4d4d;">Menghitung...</span>
+            <button onclick="resetTimerBaru()" style="background: #ff4d4d; color: white; border: none; padding: 4px 10px; border-radius: 8px; font-size: 12px; cursor: pointer;" title="Reset / Ulang Timer">🔄 Cek</button>
+        </div>
+    </div>
+
+    <!-- Kumpulan Aplikasi Google Play -->
+    <div id="listAplikasi"></div>
+
+    <!-- Kolom Komentar -->
+    <div class="comment-section">
+        <h3 style="margin-top: 0; color: #ff4d4d; border-bottom: 1px solid #441111; padding-bottom: 10px;">💬 Ulasan & Komentar Pengunjung</h3>
+        <div class="admin-form-group" style="margin-bottom: 15px;">
+            <label>Tulis Ulasan Kamu</label>
+            <input type="text" id="namaPengunjung" placeholder="Nama Kamu">
+            <textarea id="teksKomentarBaru" placeholder="Tulis komentar..." style="height: 80px;"></textarea>
+            <button class="btn-admin-action" style="background: #ff3333;" onclick="kirimKomentarBaru()">Kirim Komentar</button>
+        </div>
+        <div id="daftarKomentar">
+            <div class="comment-box">
+                <div class="comment-header"><span>Rafi Gamer</span><span>⭐ 5 / 5</span></div>
+                <div class="comment-text" id="broadcastDisplayTeks">"Timer sekarang disetel otomatis menghitung mundur menuju Hari Kemerdekaan 17 Agustus!"</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MEMUAT DATA PERMANEN DARI LOCALSTORAGE
+        let poinUser = localStorage.getItem('playStoreUserPoin') !== null ? 
+            parseInt(localStorage.getItem('playStoreUserPoin')) : 300;
+        
+        let coinsUser = localStorage.getItem('playStoreUserCoins') !== null ? 
+            parseInt(localStorage.getItem('playStoreUserCoins')) : 150;
+
+        let coinsTargetDasar = 0;
+        let pointsTargetBesar = 0;
+        let clickAdminCount = 0;
+
+        let maxKlaimBawaan = 5;
+        let sisaKlaimEvent = localStorage.getItem('sisaKlaimEventCustom1000') !== null ? 
+            parseInt(localStorage.getItem('sisaKlaimEventCustom1000')) : maxKlaimBawaan;
+
+        let statusKlaimMingguan = localStorage.getItem('statusKlaimMingguanPlay') !== null ? 
+            parseInt(localStorage.getItem('statusKlaimMingguanPlay')) : 0; 
+        
+        let waktuKlaimBerikutnya = localStorage.getItem('waktuKlaimMingguanBerikutnya') !== null ? 
+            parseInt(localStorage.getItem('waktuKlaimMingguanBerikutnya')) : 0;
+
+        let waktuMunculMingguan = localStorage.getItem('waktuMunculHadiahMingguan') !== null ?
+            parseInt(localStorage.getItem('waktuMunculHadiahMingguan')) : Date.now();
+        if(!localStorage.getItem('waktuMunculHadiahMingguan')) {
+            localStorage.setItem('waktuMunculHadiahMingguan', waktuMunculMingguan);
+        }
+
+        let namaHadiahMingguanAktif = localStorage.getItem('namaHadiahMingguanAktif') || "Bonus Spesial Hari Kemerdekaan (75 Poin)";
+        let historiAktivitas = JSON.parse(localStorage.getItem('historiAktivitasPlayStore') || "[]");
+
+        updateStatusKlaimUI();
+        perbaruiLevelDanTampilan();
+        cekStatusHadiahMingguanRealtime();
+
+        // 500 Nama Aplikasi Nyata/Populer yang Bervariasi
+        const namaAplikasiUnik = [
+            "WhatsApp Messenger", "Instagram", "TikTok", "Facebook", "Telegram", "Spotify", "Netflix", "YouTube Music", "Google Chrome", "Google Drive",
+            "Gmail", "Google Maps", "Google Photos", "Shopee", "Tokopedia", "GoPay", "OVO", "DANA", "BCA Mobile", "Livin' by Mandiri",
+            "Twitter / X", "Discord", "Zoom", "Microsoft Teams", "Google Meet", "CapCut", "Canva", "Picsart", "Snapseed", "Lightroom",
+            "WPS Office", "Microsoft Word", "Microsoft Excel", "Notion", "Evernote", "Duolingo", "Ruangguru", "Zenius", "Brainly", "Google Translate",
+            "Pinterest", "Reddit", "Twitch", "VLC for Android", "MX Player", "Shazam", "SoundCloud", "Deezer", "Audible", "Kindle",
+            "Google Keep", "Google Calendar", "Google Clock", "Google Calculator", "Google News", "Weather & Radar", "AccuWeather", "Truecaller", "SHAREit", "RAR",
+            "Bitwarden", "LastPass", "NordVPN", "ExpressVPN", "ProtonVPN", "Aloha Browser", "Brave Browser", "Firefox", "Opera Browser", "Microsoft Edge",
+            "AliExpress", "Lazada", "Blibli", "Bukalapak", "Zalora", "Sociolla", "KFCku", "McDonald's Indonesia", "Grab", "Maxim",
+            "Indodax", "Pintu", "Pluang", "Bibit", "Ajaib", "Bareksa", "Flip", "Kredivo", "Akulaku", "Home Credit",
+            "Tinder", "Bumble", "Tantan", "MiChat", "Line", "Viber", "IMO", "Kik", "Tumblr", "Quora"
+        ];
+
+        // 500 Nama Game Nyata/Populer yang Bervariasi
+        const namaGameUnik = [
+            "Mobile Legends: Bang Bang", "Free Fire", "PUBG Mobile", "Genshin Impact", "Honkai: Star Rail", "Roblox", "Minecraft", "Stardew Valley", "Terraria", "Grand Theft Auto: San Andreas",
+            "Call of Duty: Mobile", "Apex Legends Mobile", "League of Legends: Wild Rift", "Clash of Clans", "Clash Royale", "Brawl Stars", "Hay Day", "Boom Beach", "Subway Surfers", "Temple Run",
+            "Pou", "Talking Tom", "Angry Birds 2", "Cut the Rope", "Fruit Ninja", "Candy Crush Saga", "Candy Crush Soda Saga", "Bubble Witch 3 Saga", "Farm Heroes Saga", "Angry Birds Friends",
+            "8 Ball Pool", "Car Parking Multiplayer", "Asphalt 9: Legends", "Real Racing 3", "CSR Racing 2", "Need for Speed: No Limits", "Hill Climb Racing", "Beach Buggy Racing", "Traffic Rider", "MotoGP Racing",
+            "EA Sports FC Mobile", "eFootball 2026", "Dream League Soccer 2026", "Basketball Stars", "Tennis Clash", "8 Ball Billiards", "Golf Clash", "Bowmasters", "Archero", "Shadow Fight 3",
+            "Shadow Fight 4: Arena", "Mortal Kombat", "Injustice 2", "MARVEL Contest of Champions", "Transformers: Forged to Fight", "Dragon Ball Legends", "NARUTO X BORUTO NINJA TRIBES", "One Piece Bounty Rush", "Bleach: Brave Souls", "Yu-Gi-Oh! Duel Links",
+            "Honkai Impact 3rd", "Punishing: Gray Raven", "Tower of Fantasy", "Wuthering Heights", "Arknights", "Azur Lane", "Girls' Frontline", "Alchemy Stars", "Epic Seven", "Summersoners War",
+            "Raid: Shadow Legends", "Diablo Immortal", "Undawn", "LifeAfter", "State of Survival", "Last Shelter: Survival", "Top War: Battle Game", "Clash of Kings", "Rise of Kingdoms", "Lords Mobile",
+            "Among Us", "Fall Guys Mobile", "Stumble Guys", "Human: Fall Flat", "Plague Inc.", "Mini Militia", "Bloons TD 6", "Plants vs. Zombies", "Plants vs. Zombies 2", "Geometry Dash",
+            "Snake.io", "Paper.io 2", "Hole.io", "Slither.io", "Bridge Race", "Aquapark.io", "Draw Climber", "Run Rich 3D", "Join Clash 3D", "Tall Man Run"
+        ];
+
+        const iconListApp = ["📱", "💬", "🌐", "📷", "🎵", "📂", "📊", "🧭", "☁️", "🛠️"];
+        const iconListGame = ["🎮", "⚔️", "🏎️", "🧩", "🎯", "🎲", "🚀", "🛡️", "🔮", "🧱"];
+        const databaseAplikasi = [];
+
+        // Generate 500 Aplikasi
+        for (let i = 1; i <= 500; i++) {
+            let baseName = namaAplikasiUnik[(i - 1) % namaAplikasiUnik.length];
+            let namaApp = i <= namaAplikasiUnik.length ? baseName : `${baseName} Pro v${i}`;
+            let isPremium = (i % 15 === 0);
+            databaseAplikasi.push({
+                nama: namaApp,
+                kat: isPremium ? "premium" : "app",
+                icon: iconListApp[i % iconListApp.length],
+                desc: `Aplikasi resmi Google Play kategori produktivitas & utilitas (${i})`,
+                harga: isPremium ? (i * 10) % 250 + 50 : 0
+            });
+        }
+
+        // Generate 500 Game
+        for (let j = 1; j <= 500; j++) {
+            let baseGame = namaGameUnik[(j - 1) % namaGameUnik.length];
+            let namaGame = j <= namaGameUnik.length ? baseGame : `${baseGame} Edition #${j}`;
+            let isPremium = (j % 12 === 0);
+            databaseAplikasi.push({
+                nama: namaGame,
+                kat: isPremium ? "premium" : "game",
+                icon: iconListGame[j % iconListGame.length],
+                desc: `Game seru & terpopuler dari katalog Google Play Store (${j})`,
+                harga: isPremium ? (j * 15) % 300 + 100 : 0
+            });
+        }
+
+        renderAplikasi(databaseAplikasi);
+
+        function renderAplikasi(data) {
+            let html = "";
+            let dataTampil = data.slice(0, 100); 
+            if(data.length <= 100) dataTampil = data;
+
+            dataTampil.forEach(app => {
+                let tombolAksi = app.kat === 'premium' ? 
+                    `<button class="btn-beli" onclick="beliAplikasi(${app.harga})">Beli (${app.harga} Koin)</button>` : 
+                    `<button class="btn-install" onclick="installAplikasi('${app.nama.replace(/'/g, "\\'")}')">Install</button>`;
+                
+                html += `
+                    <div class="app-card">
+                        <div class="app-info">
+                            <div class="app-icon">${app.icon}</div>
+                            <div>
+                                <div style="font-weight: bold; font-size: 16px; margin-bottom: 4px;">${app.nama}</div>
+                                <div style="font-size: 13px; color: #aaa;">${app.desc}</div>
+                            </div>
+                        </div>
+                        <div>${tombolAksi}</div>
+                    </div>
+                `;
+            });
+            if(data.length > 100) {
+                html += `<div style="text-align:center; padding: 15px; color:#ff8888; font-weight:bold;">Menampilkan 100 dari total ${data.length} item. Gunakan kolom pencarian untuk hasil spesifik.</div>`;
+            }
+            document.getElementById('listAplikasi').innerHTML = html;
+        }
+
+        function installAplikasi(namaApp) {
+            let urlPlayStore = `https://play.google.com/store/search?q=${encodeURIComponent(namaApp)}&c=apps`;
+            window.open(urlPlayStore, '_blank');
+        }
+
+        function filterAplikasi() {
+            let keyword = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = databaseAplikasi.filter(app => app.nama.toLowerCase().includes(keyword));
+            renderAplikasi(filtered);
+        }
+
+        function filterKategori(kat) {
+            if (kat === 'semua') {
+                renderAplikasi(databaseAplikasi);
+            } else if (kat === 'premium') {
+                let filtered = databaseAplikasi.filter(app => app.kat === 'premium');
+                renderAplikasi(filtered);
+            } else {
+                let filtered = databaseAplikasi.filter(app => app.kat === kat);
+                renderAplikasi(filtered);
+            }
+        }
+
+        function triggerSecretAdmin() {
+            clickAdminCount++;
+            if (clickAdminCount >= 5) {
+                document.getElementById('modalPinAdmin').style.display = 'block';
+                clickAdminCount = 0;
+            }
+        }
+        function tutupPinAdmin() { document.getElementById('modalPinAdmin').style.display = 'none'; }
+        
+        function cekPinAdmin() {
+            let pinInput = document.getElementById('inputPinAdminRahasia').value;
+            if (pinInput === "00000") {
+                tutupPinAdmin();
+                document.getElementById('btnAdminPanel').style.display = 'flex';
+                bukaAdminPanel();
+                alert("🎉 PIN Benar! Panel Admin Aktif.");
+            } else {
+                alert("❌ PIN Salah!");
+            }
+        }
+        
+        function bukaAdminPanel() { document.getElementById('modalAdmin').style.display = 'block'; }
+        function tutupAdminPanel() { document.getElementById('modalAdmin').style.display = 'none'; }
+
+        function bukaDetailLevel() {
+            document.getElementById('modalDetailLevel').style.display = 'block';
+        }
+        function tutupDetailLevel() {
+            document.getElementById('modalDetailLevel').style.display = 'none';
+        }
+
+        function bukaHistoriModal() {
+            renderListHistori();
+            document.getElementById('modalHistori').style.display = 'block';
+        }
+        function tutupHistoriModal() {
+            document.getElementById('modalHistori').style.display = 'none';
+        }
+
+        function tambahHistori(pesanTeks) {
+            let waktuSekarang = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+            historiAktivitas.unshift({ waktu: waktuSekarang, teks: pesanTeks });
+            if(historiAktivitas.length > 30) historiAktivitas.pop();
+            localStorage.setItem('historiAktivitasPlayStore', JSON.stringify(historiAktivitas));
+        }
+
+        function renderListHistori() {
+            let container = document.getElementById('containerListHistori');
+            if(historiAktivitas.length === 0) {
+                container.innerHTML = `
+                    <div class="history-item">
+                        <div>
+                            <div style="font-weight: bold; font-size: 15px; color: #ff8888;">Belum ada histori</div>
+                            <div style="font-size: 12px; color: #888;">Lakukan klaim hadiah atau survei untuk mencatat histori di sini.</div>
+                        </div>
+                    </div>`;
+                return;
+            }
+            let html = "";
+            historiAktivitas.forEach(item => {
+                html += `
+                    <div class="history-item">
+                        <div>
+                            <div style="font-weight: bold; font-size: 14px; color: #ff8888; margin-bottom: 3px;">${item.teks}</div>
+                            <div style="font-size: 12px; color: #aaa;">🕒 ${item.waktu}</div>
+                        </div>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function kirimBroadcastDanHadiah() {
+            let pesan = document.getElementById('adminBroadcastPesan').value;
+            let bonus = parseInt(document.getElementById('adminBonusCoins').value) || 0;
+            if (pesan) {
+                document.getElementById('broadcastDisplayTeks').innerText = `"${pesan}"`;
+            }
+            if (bonus > 0) {
+                coinsUser += bonus;
+                localStorage.setItem('playStoreUserCoins', coinsUser);
+                perbaruiLevelDanTampilan();
+                tambahHistori(`Menerima broadcast admin & bonus +${bonus} Play Coins`);
+                alert(`🚀 Berhasil mengirim broadcast dan bonus +${bonus} Play Coins ke akun!`);
+            }
+            tutupAdminPanel();
+        }
+
+        function updateSaldoAdmin() {
+            poinUser = parseInt(document.getElementById('adminSetPoin').value) || 0;
+            coinsUser = parseInt(document.getElementById('adminSetCoins').value) || 0;
+            localStorage.setItem('playStoreUserPoin', poinUser);
+            localStorage.setItem('playStoreUserCoins', coinsUser);
+            perbaruiLevelDanTampilan();
+            tambahHistori(`Saldo akun diperbarui oleh admin (Poin: ${poinUser}, Koin: ${coinsUser})`);
+            alert("💾 Saldo berhasil diperbarui oleh Admin!");
+            tutupAdminPanel();
+        }
+
+        function resetHadiahMingguanAdmin() {
+            statusKlaimMingguan = 0;
+            waktuKlaimBerikutnya = 0;
+            waktuMunculMingguan = Date.now();
+            namaHadiahMingguanAktif = "Bonus Spesial Hari Kemerdekaan (75 Poin)";
+            localStorage.setItem('statusKlaimMingguanPlay', 0);
+            localStorage.setItem('waktuKlaimMingguanBerikutnya', 0);
+            localStorage.setItem('waktuMunculHadiahMingguan', waktuMunculMingguan);
+            localStorage.setItem('namaHadiahMingguanAktif', namaHadiahMingguanAktif);
+            cekStatusHadiahMingguanRealtime();
+            tambahHistori("Status & hadiah mingguan di-reset oleh admin.");
+            alert("🛠️ Status hadiah mingguan berhasil di-reset!");
+            tutupAdminPanel();
+        }
+
+        function simulasiLewat5HariAdmin() {
+            let enamHariMs = 6 * 24 * 60 * 60 * 1000;
+            waktuMunculMingguan = Date.now() - enamHariMs;
+            localStorage.setItem('waktuMunculHadiahMingguan', waktuMunculMingguan);
+            cekStatusHadiahMingguanRealtime();
+            tambahHistori("Simulasi: Hadiah mingguan kedaluwarsa karena lewat 5 hari dan diganti baru.");
+            alert("⏰ Simulasi berhasil! Hadiah mingguan lama dianggap hangus lewat 5 hari, diganti dengan hadiah baru.");
+            tutupAdminPanel();
+        }
+
+        function perbaruiLevelDanTampilan() {
+            // SIMPAN PERMANEN KE LOCALSTORAGE SETIAP KALI DIPERBARUI
+            localStorage.setItem('playStoreUserPoin', poinUser);
+            localStorage.setItem('playStoreUserCoins', coinsUser);
+
+            let title = document.getElementById('level-title');
+            let desc = document.getElementById('level-desc');
+            let progressFill = document.getElementById('progress-fill');
+            let badgeIcon = document.getElementById('badge-icon');
+            let levelName = "";
+            let badgeEmoji = "🛡️";
+            let persentase = 0;
+            let sisaPoinTarget = 0;
+
+            if (poinUser < 300) {
+                levelName = "Bronze";
+                badgeEmoji = "🛡️";
+                sisaPoinTarget = 300 - poinUser;
+                persentase = (poinUser / 300) * 100;
+                desc.innerHTML = `Status Akun Dasar<br><span style="color:#ff4d4d;">${sisaPoinTarget} poin menuju Silver</span>`;
+            } else if (poinUser < 1000) {
+                levelName = "Silver";
+                badgeEmoji = "🥈";
+                sisaPoinTarget = 1000 - poinUser;
+                persentase = ((poinUser - 300) / 700) * 100;
+                desc.innerHTML = `Status Akun Menengah<br><span style="color:#4cd137;">${sisaPoinTarget} poin menuju Gold</span>`;
+            } else if (poinUser < 5000) {
+                levelName = "Gold";
+                badgeEmoji = "🥇";
+                sisaPoinTarget = 5000 - poinUser;
+                persentase = ((poinUser - 1000) / 4000) * 100;
+                desc.innerHTML = `Status Akun Elite<br><span style="color:#f1c40f;">${sisaPoinTarget} poin menuju Platinum</span>`;
+            } else {
+                levelName = "Platinum / VIP Sultan";
+                badgeEmoji = "💎";
+                persentase = 100;
+                desc.innerHTML = `Level Maksimal Tercapai!<br><span style="color:#00b0ff;">Status VIP Aktif 🎉</span>`;
+            }
+
+            title.innerText = levelName;
+            badgeIcon.innerText = badgeEmoji;
+            progressFill.style.width = persentase + "%";
+            
+            document.getElementById('teks-poin').innerText = poinUser;
+            document.getElementById('poin-modal').innerText = poinUser;
+            document.getElementById('coins-dalam-poin').innerText = coinsUser;
+            document.getElementById('coins-topup').innerText = coinsUser;
+            document.getElementById('adminSetPoin').value = poinUser;
+            document.getElementById('adminSetCoins').value = coinsUser;
+        }
+
+        function ambilEventUtama(jumlah) {
+            let limitMaksimal = 5;
+            if (sisaKlaimEvent > 0) {
+                sisaKlaimEvent--;
+                localStorage.setItem('sisaKlaimEventCustom1000', sisaKlaimEvent);
+                poinUser += jumlah;
+                perbaruiLevelDanTampilan();
+                updateStatusKlaimUI();
+                tambahHistori(`Mengambil Paket Event Utama (+${jumlah} Play Points)`);
+                alert(`🎉 Berhasil mengambil ${jumlah} Play Points!\nSisa kesempatan klaim: ${sisaKlaimEvent} kali lagi.`);
+            } else {
+                alert("❌ Kuota klaim habis!");
+            }
+        }
+
+        function updateStatusKlaimUI() {
+            let btnEvent = document.getElementById('btnEventKumpul');
+            let statusText = document.getElementById('statusSisaKlaim');
+            let limitTampil = 5;
+            
+            if (sisaKlaimEvent > 0) {
+                statusText.innerHTML = `Sisa kuota klaim: <span style="color: #ff8888; font-weight: bold;">${sisaKlaimEvent}/${limitTampil}</span> kali`;
+                btnEvent.disabled = false;
+                btnEvent.innerText = "Ambil 100 Poin";
+            } else {
+                statusText.innerHTML = `❌ Kuota Selesai`;
+                btnEvent.disabled = true;
+                btnEvent.innerText = "Habis";
+            }
+        }
+
+        function cekStatusHadiahMingguanRealtime() {
+            let btnKlaim = document.getElementById('btnKlaimMingguan');
+            let infoStatus = document.getElementById('infoStatusMingguan');
+            let judulTeks = document.getElementById('judulHadiahMingguanTeks');
+
+            judulTeks.innerText = namaHadiahMingguanAktif;
+
+            let waktuSekarang = Date.now();
+            let selisihHari = (waktuSekarang - waktuMunculMingguan) / (1000 * 60 * 60 * 24);
+
+            if (statusKlaimMingguan === 0 && selisihHari >= 5) {
+                const daftarHadiahBaru = [
+                    "Bonus Eksklusif Kemerdekaan RI (100 Poin)",
+                    "Hadiah Spesial Pahlawan Play (120 Poin)",
+                    "Paket Merdeka Gaming Points (150 Poin)",
+                    "Bonus Kejutan Merah Putih (90 Poin)"
+                ];
+                let randomIndex = Math.floor(Math.random() * daftarHadiahBaru.length);
+                namaHadiahMingguanAktif = daftarHadiahBaru[randomIndex];
+                waktuMunculMingguan = Date.now();
+                
+                localStorage.setItem('namaHadiahMingguanAktif', namaHadiahMingguanAktif);
+                localStorage.setItem('waktuMunculHadiahMingguan', waktuMunculMingguan);
+                
+                judulTeks.innerText = namaHadiahMingguanAktif;
+                tambahHistori(`Hadiah mingguan sebelumnya kedaluwarsa (>5 hari), diganti baru: ${namaHadiahMingguanAktif}`);
+            }
+
+            let waktuSisaHari = Math.max(0, (5 - selisihHari)).toFixed(1);
+
+            let waktuSekarangMs = waktuSekarang;
+            if (waktuKlaimBerikutnya > 0 && waktuSekarangMs >= waktuKlaimBerikutnya) {
+                statusKlaimMingguan = 0;
+                localStorage.setItem('statusKlaimMingguanPlay', 0);
+            }
+
+            if (statusKlaimMingguan === 0) {
+                btnKlaim.disabled = false;
+                btnKlaim.innerText = "Klaim";
+                if (selisihHari < 5) {
+                    infoStatus.innerHTML = `Tersedia! <span style="color: #f39c12;">(Kedaluwarsa dalam ${waktuSisaHari} hari jika tidak diklaim)</span>`;
+                } else {
+                    infoStatus.innerHTML = `Hadiah baru tersedia untuk diklaim!`;
+                }
+            } else {
+                btnKlaim.disabled = true;
+                btnKlaim.innerText = "Sudah Diklaim ✔️";
+                infoStatus.innerHTML = `Sudah diklaim. Reset minggu depan (<span style="color: #00b0ff;">Hari Senin</span>)`;
+            }
+        }
+
+        function klaimHadiahMingguan() {
+            let waktuSekarang = Date.now();
+            let selisihHari = (waktuSekarang - waktuMunculMingguan) / (1000 * 60 * 60 * 24);
+
+            if (statusKlaimMingguan === 0 && selisihHari < 5) {
+                let jumlahPoinDapat = 75;
+                if(namaHadiahMingguanAktif.includes("100")) jumlahPoinDapat = 100;
+                if(namaHadiahMingguanAktif.includes("120")) jumlahPoinDapat = 120;
+                if(namaHadiahMingguanAktif.includes("150")) jumlahPoinDapat = 150;
+                if(namaHadiahMingguanAktif.includes("90")) jumlahPoinDapat = 90;
+
+                poinUser += jumlahPoinDapat; 
+                statusKlaimMingguan = 1;
+                localStorage.setItem('statusKlaimMingguanPlay', 1);
+
+                let nextMonday = new Date(waktuSekarang);
+                let day = nextMonday.getDay();
+                let diffToNextMon = (day === 1 ? 7 : (1 + 7 - day) % 7);
+                nextMonday.setDate(nextMonday.getDate() + diffToNextMon);
+                nextMonday.setHours(0, 0, 0, 0);
+                
+                waktuKlaimBerikutnya = nextMonday.getTime();
+                localStorage.setItem('waktuKlaimMingguanBerikutnya', waktuKlaimBerikutnya);
+
+                perbaruiLevelDanTampilan();
+                cekStatusHadiahMingguanRealtime();
+                tambahHistori(`Berhasil klaim ${namaHadiahMingguanAktif} (+${jumlahPoinDapat} Poin)`);
+                alert(`🎁 Hadiah mingguan "${namaHadiahMingguanAktif}" berhasil diklaim (+${jumlahPoinDapat} Poin)!\nTombol akan dikunci dan direset otomatis pada hari Senin minggu depan.`);
+            } else {
+                alert("❌ Hadiah mingguan ini sudah kedaluwarsa (>5 hari tidak diklaim) atau sudah pernah diklaim!");
+            }
+        }
+
+        function beliAplikasi(harga) {
+            if (coinsUser >= harga) {
+                coinsUser -= harga;
+                perbaruiLevelDanTampilan();
+                tambahHistori(`Membeli aplikasi/game pro senilai ${harga} Play Coins`);
+                alert("🎉 Pembelian berhasil! Aplikasi/Game Pro ditambahkan ke perangkat Anda.");
+            } else {
+                alert("❌ Play Coins Anda tidak mencukupi. Silakan selesaikan misi survei terlebih dahulu!");
+                bukaPlayPoints();
+                bukaHalamanTopup();
+            }
+        }
+
+        function bukaPlayPoints() { 
+            document.getElementById('modalPlayPoints').style.display = 'block';
+            cekStatusHadiahMingguanRealtime();
+        }
+        function tutupPlayPoints() { document.getElementById('modalPlayPoints').style.display = 'none'; }
+        function pilihTab(evt, tabName) {
+            let contents = document.getElementsByClassName("tab-content");
+            for (let c of contents) c.classList.remove("active");
+            let buttons = document.getElementsByClassName("pp-tab-btn");
+            for (let b of buttons) b.classList.remove("active");
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function bukaHalamanTopup() { document.getElementById('modalTopup').style.display = 'block'; }
+        function tutupHalamanTopup() { document.getElementById('modalTopup').style.display = 'none'; }
+
+        function mulaiSurveiPoints(jumlahPoin) {
+            pointsTargetBesar = jumlahPoin;
+            document.getElementById('infoTargetSurveiPoints').innerText = `Target Hadiah: +${jumlahPoin} Play Points 🏆`;
+            
+            let soalTeks = "";
+            let container = document.getElementById('pilihanJawabanPointsContainer');
+            
+            if (jumlahPoin === 50) {
+                soalTeks = "Pertanyaan: Apa fungsi utama dari Google Play Protect pada perangkat Android?";
+                container.innerHTML = `
+                    <button class="survey-option" onclick="jawabSurveiPoints(true)">A. Memindai dan melindungi perangkat dari aplikasi berbahaya secara berkala</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">B. Menghemat baterai dan mempercepat proses charging</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">C. Menyembunyikan file pribadi dari galeri handphone</button>
+                `;
+            } else if (jumlahPoin === 150) {
+                soalTeks = "Pertanyaan: Fitur manajemen apa di Android yang paling efektif menghemat penggunaan data latar belakang (background data)?";
+                container.innerHTML = `
+                    <button class="survey-option" onclick="jawabSurveiPoints(true)">A. Mengaktifkan Penghemat Data (Data Saver) dan membatasi latar belakang aplikasi</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">B. Mengubah resolusi layar menjadi hitam putih</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">C. Mematikan kartu SIM secara permanen</button>
+                `;
+            } else if (jumlahPoin === 500) {
+                soalTeks = "Pertanyaan: Manakah protokol keamanan enkripsi yang direkomendasikan saat mengakses jaringan Wi-Fi publik?";
+                container.innerHTML = `
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">A. Menggunakan jaringan terbuka tanpa sandi agar cepat terhubung</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(true)">B. Menggunakan VPN terpercaya dengan enkripsi end-to-end</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">C. Mematikan fitur enkripsi pada pengaturan router</button>
+                `;
+            } else if (jumlahPoin === 1500) {
+                soalTeks = "Pertanyaan: Dalam arsitektur sistem Android, komponen manakah yang bertanggung jawab langsung mengeksekusi bytecode aplikasi?";
+                container.innerHTML = `
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">A. Google Chrome Engine</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(true)">B. Android Runtime (ART) dengan kompilasi Ahead-Of-Time/Just-In-Time</button>
+                    <button class="survey-option" onclick="jawabSurveiPoints(false)">C. BIOS Motherboard Komputer</button>
+                `;
+            }
+
+            document.getElementById('soalSurveiPointsTeks').innerText = soalTeks;
+            document.getElementById('modalSurveiPoints').style.display = 'block';
+        }
+
+        function tutupSurveiPoints() { document.getElementById('modalSurveiPoints').style.display = 'none'; }
+
+        function jawabSurveiPoints(isTrue) {
+            if (isTrue) {
+                poinUser += pointsTargetBesar;
+                perbaruiLevelDanTampilan();
+                tambahHistori(`Menyelesaikan survei Play Points (+${pointsTargetBesar} Poin)`);
+                alert(`🎉 Luar Biasa! Jawaban Benar, +${pointsTargetBesar} Play Points berhasil ditambahkan.`);
+                tutupSurveiPoints();
+                tutupPlayPoints();
+            } else {
+                alert("❌ Jawaban salah, silakan coba lagi dengan pilihan yang tepat!");
+            }
+        }
+
+        function mulaiSurveiTersulit(targetKoin) {
+            coinsTargetDasar = targetKoin;
+            let targetBonus = Math.floor(targetKoin * 1.2);
+            document.getElementById('infoTargetSurvei').innerText = `Target Hadiah: ${targetBonus} Play Coins (+20% Bonus)`;
+            document.getElementById('soalSurveiTeks').innerText = "Berapakah hasil dari 15 × 4 + 20?";
+            
+            let container = document.getElementById('pilihanJawabanContainer');
+            container.innerHTML = `
+                <button class="survey-option" onclick="jawabSurveiTersulit(60, ${targetBonus})">A. 70</button>
+                <button class="survey-option" onclick="jawabSurveiTersulit(80, ${targetBonus})">B. 80 (Benar)</button>
+                <button class="survey-option" onclick="jawabSurveiTersulit(90, ${targetBonus})">C. 90</button>
+            `;
+            document.getElementById('modalSurvei').style.display = 'block';
+        }
+
+        function tutupSurvei() { document.getElementById('modalSurvei').style.display = 'none'; }
+
+        function jawabSurveiTersulit(pilihan, bonusTotal) {
+            if (pilihan === 80) {
+                coinsUser += bonusTotal;
+                perbaruiLevelDanTampilan();
+                tambahHistori(`Menyelesaikan survei Play Coins (+${bonusTotal} Koin)`);
+                alert(`🎉 Jawaban Benar! Selamat, +${bonusTotal} Play Coins telah ditambahkan.`);
+                tutupSurvei();
+                tutupHalamanTopup();
+            } else {
+                alert("❌ Jawaban Salah, silakan coba lagi!");
+            }
+        }
+
+        function kirimKomentarBaru() {
+            let nama = document.getElementById('namaPengunjung').value;
+            let teks = document.getElementById('teksKomentarBaru').value;
+            if(!nama || !teks) {
+                alert("Mohon isi nama dan komentar terlebih dahulu!");
+                return;
+            }
+            let list = document.getElementById('daftarKomentar');
+            let itemBaru = document.createElement('div');
+            itemBaru.className = "comment-box";
+            itemBaru.innerHTML = `
+                <div class="comment-header"><span>${nama}</span><span>⭐ 5 / 5</span></div>
+                <div class="comment-text">"${teks}"</div>
+            `;
+            list.prepend(itemBaru);
+            document.getElementById('namaPengunjung').value = "";
+            document.getElementById('teksKomentarBaru').value = "";
+            tambahHistori(`Mengirim ulasan komentar baru dari "${nama}"`);
+            alert("💬 Komentar berhasil dikirim!");
+        }
+
+        function resetTimerBaru() {
+            alert("🔄 Hitung mundur otomatis disinkronkan tepat menuju 17 Agustus jam 15.36.40!");
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const target = new Date(2026, 7, 17, 15, 36, 40);
+
+            let diff = target - now;
+            if (diff <= 0) {
+                document.getElementById('countdown-timer').innerText = "00h 00j 00m 00d (Waktu Tercapai!)";
+                cekStatusHadiahMingguanRealtime();
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown-timer').innerText = 
+                `${days}h ${String(hours).padStart(2, '0')}j ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}d`;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
