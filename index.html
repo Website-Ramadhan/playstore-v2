@@ -1349,7 +1349,16 @@ window.onload = function() {
     cekStatusHadiahMingguan();
     renderAplikasi(databaseAplikasi);
 };
-</script>
+ <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./pwabuilder-sw.js')
+                .then(reg => console.log('SW terdaftar!', reg))
+                .catch(err => console.log('SW gagal:', err));
+            });
+        }
+    </script>
+
 
 </body>
 </html>
